@@ -5,7 +5,7 @@ using System.Xml.Serialization;
 
 namespace Turnable.Tiled
 {
-    public enum MapOrientation
+    public enum Orientation
     {
         [XmlEnum(Name = "orthogonal")]
         Orthogonal,

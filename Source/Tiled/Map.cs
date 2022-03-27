@@ -14,7 +14,7 @@ namespace Turnable.Tiled
         [XmlAttribute("tiledversion")]
         public string TiledVersion { get; set; }
         [XmlAttribute("orientation")]
-        public MapOrientation Orientation { get; set; }
+        public Orientation Orientation { get; set; }
         [XmlAttribute("renderorder")]
         public RenderOrder RenderOrder { get; set; }
         [XmlAttribute("width")]
@@ -30,6 +30,11 @@ namespace Turnable.Tiled
         public int NextLayerId { get; set; }
         [XmlAttribute("nextobjectid")]
         public int NextObjectId { get; set; }
+        [XmlElement("layer")]
+        public List<Layer> Layers { get; set; }
+        [XmlArray(ElementName = "properties")]
+        [XmlArrayItem(ElementName = "property")]
+        public List<Property> Properties { get; set; }
 
         public static Map Load(string fullPath)
         {
