@@ -51,7 +51,7 @@ namespace Tests.Tiled
         public void LoadEmptyMapWithMapAndLayerProperties()
         {
             // NOTE: NCrunch runs the test process under bin/debug, but the Fixtures folder is three levels above that
-            var mapPath = ("../../../Fixtures/orthogonal_base64_zlib_left_up_16x16_48x48_empty_map_and_layer_properties.tmx");
+            var mapPath = ("../../../Fixtures/orthogonal_base64_zlib_left_up_16x16_48x48_empty_with_map_and_layer_properties.tmx");
             var map = Map.Load(mapPath);
 
             // Are the map properties correctly loaded?
@@ -77,6 +77,32 @@ namespace Tests.Tiled
             Assert.That(property1.Value, Is.EqualTo("layer_1"));
             Assert.That(property2.Name, Is.EqualTo("property_string_2"));
             Assert.That(property2.Value, Is.EqualTo("layer_2"));
+        }
+
+        [Test]
+        public void LoadEmptyMapWithEmbeddedTileset()
+        {
+            // NOTE: NCrunch runs the test process under bin/debug, but the Fixtures folder is three levels above that
+            var mapPath = ("../../../Fixtures/orthogonal_base64_zlib_left_up_16x16_48x48_empty_with_embedded_tileset.tmx");
+            var map = Map.Load(mapPath);
+
+            // Are the tilesets correctly loaded?
+            Assert.That(map.Tilesets, Is.Not.Null);
+            Assert.That(map.Tilesets.Count, Is.EqualTo(1));
+            var tileset = map.Tilesets[0];
+            Assert.That(tileset.FirstGid, Is.EqualTo(1));
+            Assert.That(tileset.Name, Is.EqualTo("embedded_tileset"));
+            Assert.That(tileset.TileWidth, Is.EqualTo(16));
+            Assert.That(tileset.TileWidth, Is.EqualTo(16));
+            Assert.That(tileset.TileCount, Is.EqualTo(352));
+            Assert.That(tileset.Columns, Is.EqualTo(16));
+
+            // Is the image of the tileset correctly loaded?
+            Assert.That(tileset.Image, Is.Not.Null);
+            var image = tileset.Image;
+            Assert.That(image.Source, Is.EqualTo("image.png"));
+            Assert.That(image.Width, Is.EqualTo(256));
+            Assert.That(image.Height, Is.EqualTo(352));
         }
     }
 }
