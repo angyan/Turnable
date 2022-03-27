@@ -47,10 +47,11 @@ namespace Tests.Tiled
             Assert.That(layer.Data.Value, Is.EqualTo("eJxjYBgFo2AUjFQAAAQAAAE="));
         }
 
+        [Test]
         public void LoadEmptyMapWithMapAndLayerProperties()
         {
             // NOTE: NCrunch runs the test process under bin/debug, but the Fixtures folder is three levels above that
-            var mapPath = ("../../../Fixtures/orthogonal_base64_zlib_left_up_16x16_48x48_empty_layer_properties.tmx");
+            var mapPath = ("../../../Fixtures/orthogonal_base64_zlib_left_up_16x16_48x48_empty_map_and_layer_properties.tmx");
             var map = Map.Load(mapPath);
 
             // Are the map properties correctly loaded?
@@ -73,9 +74,9 @@ namespace Tests.Tiled
             property1 = layer.Properties[0];
             property2 = layer.Properties[1];
             Assert.That(property1.Name, Is.EqualTo("property_string_1"));
-            Assert.That(property1.Value, Is.EqualTo("map_1"));
+            Assert.That(property1.Value, Is.EqualTo("layer_1"));
             Assert.That(property2.Name, Is.EqualTo("property_string_2"));
-            Assert.That(property2.Value, Is.EqualTo("map_2"));
+            Assert.That(property2.Value, Is.EqualTo("layer_2"));
         }
     }
 }
