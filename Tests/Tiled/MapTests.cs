@@ -66,7 +66,7 @@ namespace Tests.Tiled
             Assert.That(property2.Value, Is.EqualTo("map_2"));
 
             // Are the layer properties correctly loaded?
-            // TODO: The library currently only supports properties of stype string
+            // TODO: The library currently only supports properties of type string
             Layer layer = map.Layers[0];
 
             Assert.That(layer.Properties, Is.Not.Null);
@@ -103,6 +103,21 @@ namespace Tests.Tiled
             Assert.That(image.Source, Is.EqualTo("image.png"));
             Assert.That(image.Width, Is.EqualTo(256));
             Assert.That(image.Height, Is.EqualTo(352));
+        }
+
+        [Test]
+        public void LoadMapWithBase64ZlibData()
+        {
+            var mapPath = "../../../Fixtures/orthogonal_base64_zlib_left_up_16x16_16x16_with_layer_data.tmx";
+            var map = Map.Load(mapPath);
+
+            // Is the layer data loaded correctly?
+            Layer layer = map.Layers[0];
+
+            Assert.That(layer.Data, Is.Not.Null);
+            Assert.That(layer.Data.Encoding, Is.EqualTo(Encoding.Base64));
+            Assert.That(layer.Data.Compression, Is.EqualTo(Compression.Zlib));
+            Assert.That(layer.Data.Value, Is.EqualTo("eJzbwszAsJVMvA2InwIxueD5qP5R/aP6KdIvxsLAIE4mlgBiABB0Jq0="));
         }
     }
 }

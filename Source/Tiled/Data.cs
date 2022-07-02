@@ -4,13 +4,13 @@ namespace Turnable.Tiled
 {
     public class Data
     {
-        private string value;
+        private string _value;
 
         [XmlText]
         public string Value
         {
-            get { return value; }
-            set { this.value = value.Trim(); }
+            get => _value;
+            set => _value = value.Trim();
         }
         [XmlAttribute("encoding")]
         public Encoding Encoding { get; set; }
@@ -21,9 +21,9 @@ namespace Turnable.Tiled
         {
         }
 
-        public Data(string value) : this()
+        public Data(string data) : this()
         {
-            Value = value;
+            Value = data;
         }
     }
 }
