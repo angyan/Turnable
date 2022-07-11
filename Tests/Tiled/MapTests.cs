@@ -108,7 +108,7 @@ namespace Tests.Tiled
         [Test]
         public void LoadMapWithBase64ZlibData()
         {
-            var mapPath = "../../../Fixtures/orthogonal_base64_zlib_left_up_16x16_16x16_with_layer_data.tmx";
+            var mapPath = "../../../Fixtures/orthogonal_base64_zlib_left_up_16x16_16x16_with_layer_data_and_external_tileset.tmx";
             var map = Map.Load(mapPath);
 
             // Is the layer data loaded correctly?
@@ -118,6 +118,62 @@ namespace Tests.Tiled
             Assert.That(layer.Data.Encoding, Is.EqualTo(Encoding.Base64));
             Assert.That(layer.Data.Compression, Is.EqualTo(Compression.Zlib));
             Assert.That(layer.Data.Value, Is.EqualTo("eJzbwszAsJVMvA2InwIxueD5qP5R/aP6KdIvxsLAIE4mlgBiABB0Jq0="));
+        }
+
+        [Test]
+        public void LoadMapWithExternalTileset()
+        {
+            var mapPath = "../../../Fixtures/orthogonal_base64_zlib_left_up_16x16_16x16_with_layer_data_and_external_tileset.tmx";
+            var map = Map.Load(mapPath);
+
+            // Are the tilesets correctly loaded?
+            Assert.That(map.Tilesets, Is.Not.Null);
+            Assert.That(map.Tilesets.Count, Is.EqualTo(1));
+            var tileset = map.Tilesets[0];
+            Assert.That(tileset.FirstGid, Is.EqualTo(1));
+            Assert.That(tileset.Source, Is.EqualTo("tileset.tsx"));
+            Assert.That(tileset.Name, Is.EqualTo("tileset"));
+            Assert.That(tileset.TileWidth, Is.EqualTo(16));
+            Assert.That(tileset.TileWidth, Is.EqualTo(16));
+            Assert.That(tileset.TileCount, Is.EqualTo(1078));
+            Assert.That(tileset.Columns, Is.EqualTo(49));
+
+            // Is the image of the tileset correctly loaded?
+            Assert.That(tileset.Image, Is.Not.Null);
+            var image = tileset.Image;
+            Assert.That(image.Source, Is.EqualTo("tilesheet.png"));
+            Assert.That(image.Width, Is.EqualTo(784));
+            Assert.That(image.Height, Is.EqualTo(352));
+        }
+
+        [Test]
+        public void LoadMapWithMultipleBase64ZlibData()
+        {
+            var mapPath = "../../../Fixtures/orthogonal_base64_zlib_left_up_16x16_16x16_with_multiple_layer_data_and_external_tileset.tmx";
+            var map = Map.Load(mapPath);
+
+            // Are the layers correctly loaded?
+            Assert.That(map.Layers, Is.Not.Null);
+            Assert.That(map.Layers.Count, Is.EqualTo(2));
+            Layer layer = map.Layers[0];
+            Assert.That(layer.Id, Is.EqualTo(1));
+            Assert.That(layer.Name, Is.EqualTo("Background"));
+            Assert.That(layer.Width, Is.EqualTo(16));
+            Assert.That(layer.Height, Is.EqualTo(16));
+            Assert.That(layer.Data, Is.Not.Null);
+            Assert.That(layer.Data.Encoding, Is.EqualTo(Encoding.Base64));
+            Assert.That(layer.Data.Compression, Is.EqualTo(Compression.Zlib));
+            Assert.That(layer.Data.Value, Is.EqualTo("eJxjYKAcMJKJR/WP6h/VT7l+SgAAjZcAxQ=="));
+
+            layer = map.Layers[1];
+            Assert.That(layer.Id, Is.EqualTo(3));
+            Assert.That(layer.Name, Is.EqualTo("Objects"));
+            Assert.That(layer.Width, Is.EqualTo(16));
+            Assert.That(layer.Height, Is.EqualTo(16));
+            Assert.That(layer.Data, Is.Not.Null);
+            Assert.That(layer.Data.Encoding, Is.EqualTo(Encoding.Base64));
+            Assert.That(layer.Data.Compression, Is.EqualTo(Compression.Zlib));
+            Assert.That(layer.Data.Value, Is.EqualTo("eJzbwszAsBUHtmLALQfC24D4KRDjAla4pcDgOZJ+Ywr0GzMgMCX6ybUfF6C2fvMBtn9UPwNDMgX6k5EwJfYj6xdjYWAQx4FB+nHJgbAEEAMAEMEtNQ=="));
         }
     }
 }

@@ -1,4 +1,4 @@
-using Source.Tiled;
+using Turnable.Tiled;
 using System.Collections.Generic;
 using System.IO;
 using System.Xml.Serialization;
@@ -10,6 +10,8 @@ namespace Turnable.Tiled
     {
         [XmlAttribute("firstgid")]
         public int FirstGid { get; set; }
+        [XmlAttribute("source")]
+        public string Source { get; set; }
         [XmlAttribute("name")]
         public string Name { get; set; }
         [XmlAttribute("tilewidth")]

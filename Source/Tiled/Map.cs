@@ -40,11 +40,42 @@ namespace Turnable.Tiled
 
         public static Map Load(string fullPath)
         {
-            FileStream fileStream = new FileStream(fullPath, FileMode.Open);
+            var directory = Path.GetDirectoryName(fullPath);
+            Map map = null;
             XmlSerializer xmlSerializer = new XmlSerializer(typeof(Map));
 
-            var map = (Map)xmlSerializer.Deserialize(fileStream);
-            fileStream.Close();
+            using (var fileStream = new FileStream(fullPath, FileMode.Open))
+            {
+                map = (Map)xmlSerializer.Deserialize(fileStream);
+
+                // Deserialize any external Tilesets
+                // Tiled allows Maps to reference Tilesets that are stored in external files (i.e. not embedded within the Map XML itself)
+                foreach (var tileset in map.Tilesets)
+                {
+                    if (tileset.Source != null)
+                    {
+                        var tilesetPath = directory + "\\" + tileset.Source;
+                        using (var tilesetFileStream = new FileStream(tilesetPath, FileMode.Open))
+                        {
+                            XmlSerializer tilesetXmlSerializer = new XmlSerializer(typeof(Tileset));
+                            var deserializedTileset = (Tileset)tilesetXmlSerializer.Deserialize(tilesetFileStream);
+
+                            // Copy over properties from the deserialized Tileset
+                            tileset.Name = deserializedTileset.Name;
+                            tileset.TileWidth = deserializedTileset.TileWidth;
+                            tileset.TileHeight = deserializedTileset.TileHeight;
+                            tileset.TileCount = deserializedTileset.TileCount;
+                            tileset.Columns = deserializedTileset.Columns;
+
+                            // Copy over properties from the Image in the deserialized Tileset
+                            tileset.Image = new Image();
+                            tileset.Image.Source = deserializedTileset.Image.Source;
+                            tileset.Image.Height = deserializedTileset.Image.Height;
+                            tileset.Image.Width = deserializedTileset.Image.Width;
+                        }
+                    }
+                }
+            }
 
             return map;
         }

@@ -8,10 +8,15 @@ namespace Turnable.Tiled
     public class Tiles
     {
         readonly private MemoryStream _tiles = new MemoryStream();
-        private BinaryReader _reader;
+        readonly private int _layerWidth;
+        readonly private int _layerHeight;
+        private readonly BinaryReader _reader;
 
-        public Tiles(Data data)
+        public Tiles(int layerWidth, int layerHeight, Data data)
         {
+            _layerWidth = layerWidth;
+            _layerHeight = layerHeight;
+
             // Decode the data
             byte[] decodedData = Convert.FromBase64String(data.Value);
 
@@ -29,10 +34,15 @@ namespace Turnable.Tiled
             }
         }
 
-        public uint At(uint col, uint row)
+        public uint this[int col, int row]
         {
-            _tiles.Seek(0, SeekOrigin.Begin);
-            return _reader.ReadUInt32();
+            get
+            {
+                var seekLocation = (col + row * _layerWidth) * 4;
+
+                _tiles.Seek(seekLocation, SeekOrigin.Begin);
+                return _reader.ReadUInt32();
+            }
         }
     }
 }

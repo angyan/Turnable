@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Xml.Serialization;
 
-namespace Source.Tiled
+namespace Turnable.Tiled
 {
     [XmlType("image")]
     public class Image

@@ -1,0 +1,31 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net472</TargetFramework>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="SharpZipLib" Version="1.3.3" />
+    </ItemGroup>
+
+	<Target Name="CopyDLLsToGodotTest" AfterTargets="Build" Condition="'$(Configuration)' == 'Release'">
+		<ItemGroup>
+			<!-- https://docs.microsoft.com/en-us/visualstudio/msbuild/copy-task?view=vs-2022 -->
+			<!-- Because this ItemGroup is inside the target, this will enumerate
+                 all files just before calling Copy. If the ItemGroup were outside
+                 the target , it would enumerate the files during evaluation, before
+                 the build starts, which may miss files created during the build. -->
+			<MySourceFiles Include="$(TargetDir)*.dll"/>
+		</ItemGroup>
+		
+		<Message Text="Executing CopyDLLsToGodotTest task" Importance="High" />
+		
+		<Copy
+			SourceFiles="@(MySourceFiles)"
+			DestinationFolder="C:\Src\Test\lib"
+		/>
+
+		<Message Text="Copied build files" Importance="High" />
+	</Target>
+
+</Project>
