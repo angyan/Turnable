@@ -15,4 +15,4 @@ What makes Turnable different from others of its kind? Well, once fleshed out, t
 * Tiled (TMX) support
 * Skills, Stats, Inventories etc.
 
-I've startd development on this framework again!
+I've started development on this framework again!
