@@ -17,7 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="Fixtures\orthogonal_base64_zlib_left_up_16x16_48x48_empty.tmx">
+    <None Update="Tiled\Fixtures\orthogonal_base64_zlib_left_up_16x16_48x48_empty.tmx">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
