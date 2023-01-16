@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Turnable.AI.Pathfinding;
 using Turnable.Tiled;
 
 namespace ExtensionMethods
@@ -24,6 +25,7 @@ namespace Turnable.Places
     {
         public Map Map { get; set; }
         private readonly Tiles[] _tiles;
+        public bool[] CollisionMasks { get; }
 
         public Level(string fullPath)
         {
@@ -33,6 +35,7 @@ namespace Turnable.Places
             {
                 _tiles[index] = new Tiles(layer.Width, layer.Height, layer.Data);
             }
+            CollisionMasks = new bool[Map.Layers.Count];
         }
 
         public uint this[int x, int y, int z]
@@ -46,6 +49,11 @@ namespace Turnable.Places
             {
 
             }
+        }
+
+        internal List<Node> GetNodes()
+        {
+            return new List<Node>();
         }
     }
 }
