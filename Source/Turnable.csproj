@@ -1,15 +1,14 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-    <PropertyGroup>
-        <TargetFramework>net472</TargetFramework>
-    </PropertyGroup>
+  <PropertyGroup>
+	<TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+	<Nullable>enable</Nullable>
+  </PropertyGroup>
 
-    <ItemGroup>
-        <PackageReference Include="FluentAssertions" Version="6.9.0" />
-        <PackageReference Include="Moq" Version="4.18.4" />
-        <PackageReference Include="SharpZipLib" Version="1.3.3" />
-        <PackageReference Include="xunit" Version="2.4.2" />
-    </ItemGroup>
+	<ItemGroup>
+	  <PackageReference Include="SharpZipLib" Version="1.3.3" />
+	</ItemGroup>
 
 	<Target Name="CopyDLLsToGladiatorGame" AfterTargets="Build" Condition="'$(Configuration)' == 'Release'">
 		<ItemGroup>
@@ -20,12 +19,11 @@
                  the build starts, which may miss files created during the build. -->
 			<MySourceFiles Include="$(TargetDir)*.dll" />
 		</ItemGroup>
-		
+
 		<Message Text="Executing CopyDLLsToGodotTest task" Importance="High" />
-		
+
 		<Copy SourceFiles="@(MySourceFiles)" DestinationFolder="C:\Src\Gladiator Game\Libraries" />
 
 		<Message Text="Copied build files" Importance="High" />
 	</Target>
-
 </Project>

@@ -33,17 +33,14 @@ namespace Turnable.Places
             _tiles = new Tiles[Map.Layers.Count];
             foreach (var (layer, index) in Map.Layers.WithIndex<Layer>())
             {
-                _tiles[index] = new Tiles(layer.Width, layer.Height, layer.Data);
+                _tiles[index] = new Tiles(layer.Width, layer.Data);
             }
             CollisionMasks = new bool[Map.Layers.Count];
         }
 
         public uint this[int x, int y, int z]
         {
-            get
-            {
-                return _tiles[z][x, y];
-            }
+            get => _tiles[z][x, y];
 
             set
             {

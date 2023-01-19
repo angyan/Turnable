@@ -7,15 +7,13 @@ namespace Turnable.Tiled
 {
     public class Tiles
     {
-        readonly private MemoryStream _tiles = new MemoryStream();
-        readonly private int _layerWidth;
-        readonly private int _layerHeight;
+        private readonly MemoryStream _tiles = new MemoryStream();
+        private readonly int _layerWidth;
         private readonly BinaryReader _reader;
 
-        public Tiles(int layerWidth, int layerHeight, Data data)
+        public Tiles(int layerWidth, Data data)
         {
             _layerWidth = layerWidth;
-            _layerHeight = layerHeight;
 
             // Decode the data
             byte[] decodedData = Convert.FromBase64String(data.Value);
