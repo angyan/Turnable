@@ -1,13 +1,15 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-	<TargetFramework>net6.0</TargetFramework>
+	<PropertyGroup>
+	  <TargetFramework>net6.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
-	<Nullable>enable</Nullable>
-  </PropertyGroup>
+		<WarningsAsErrors>Nullable</WarningsAsErrors>
+    <Nullable>enable</Nullable>
+	</PropertyGroup>
 
 	<ItemGroup>
-	  <PackageReference Include="SharpZipLib" Version="1.3.3" />
+		<PackageReference Include="SharpZipLib" Version="1.3.3" />
+		<PackageReference Include="System.Collections.Immutable" Version="7.0.0" />
 	</ItemGroup>
 
 	<Target Name="CopyDLLsToGladiatorGame" AfterTargets="Build" Condition="'$(Configuration)' == 'Release'">
@@ -20,10 +22,9 @@
 			<MySourceFiles Include="$(TargetDir)*.dll" />
 		</ItemGroup>
 
-		<Message Text="Executing CopyDLLsToGodotTest task" Importance="High" />
-
+		<Message Text="Executing CopyDLLsToGladiatorGame task" Importance="High" />
 		<Copy SourceFiles="@(MySourceFiles)" DestinationFolder="C:\Src\Gladiator Game\Libraries" />
-
-		<Message Text="Copied build files" Importance="High" />
+	  <Message Text="Copied Turnable DLL files" Importance="High" />
 	</Target>
+
 </Project>
