@@ -1,24 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.Immutable;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Immutable;
 
-namespace Turnable.Tiled
+namespace Turnable.Tiled;
+
+internal record TilesetFilePath
 {
-    internal record TilesetFilePath
+    internal string Value { get; init; }
+    internal ImmutableArray<string> SupportedExtensions = new[] { ".json", ".JSON", ".tsj", ".TSJ" }.ToImmutableArray();
+
+    internal TilesetFilePath(string value)
     {
-        internal string Value { get; init; }
-        internal ImmutableArray<string> SupportedExtensions = new[] { ".json", ".JSON", ".tsj", ".TSJ" }.ToImmutableArray();
+        if (!IsValid(value)) throw new ArgumentException($"{Path.GetExtension(value)} is not a supported file extension for a Tiled Tileset");
 
-        internal TilesetFilePath(string value)
-        {
-            if (!IsValid(value)) throw new ArgumentException($"{Path.GetExtension(value)} is not a supported file extension for a Tiled Tileset");
-
-            Value = value;
-        }
-
-        private bool IsValid(string value) => SupportedExtensions.Contains(Path.GetExtension(value));
+        Value = value;
     }
+
+    public static implicit operator TilesetFilePath(string value) => new(value);
+    public static implicit operator string(TilesetFilePath tilesetFilePath) => tilesetFilePath.Value;
+
+    private bool IsValid(string value) => SupportedExtensions.Contains(Path.GetExtension(value));
 }

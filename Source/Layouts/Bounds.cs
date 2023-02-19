@@ -1,28 +1,20 @@
-﻿using System.Runtime.CompilerServices;
-
-[assembly: InternalsVisibleTo("Tests")]
-
-namespace Turnable.Layouts;
+﻿namespace Turnable.Layouts;
 
 internal readonly record struct Bounds
 {
-    internal int TopLeftX { get; init; }
-    internal int TopLeftY { get; init; }
-    internal int Width { get; init; }
-    internal int Height { get; init; }
+    internal Location TopLeft { get; init; }
+    internal Dimension Width { get; init; }
+    internal Dimension Height { get; init; }
 
-    internal Bounds(int topLeftX, int topLeftY, int width, int height)
+    internal Bounds(Location topLeft, Dimension width, Dimension height)
     {
-        if (!IsValidDimensions(width, height)) throw new ArgumentException($"A width of {width} and a height of {height} are not valid dimensions for a bounds");
-        if (!IsValidPosition(topLeftX, topLeftY)) throw new ArgumentException($"{topLeftX}, {topLeftY} are not valid coordinates for the top left position of a bounds");
+        if (!IsValidLocation(topLeft)) throw new ArgumentException($"{topLeft} is not a valid Location for a Bounds");
 
-        TopLeftX = topLeftX;
-        TopLeftY = topLeftY;
+        TopLeft = topLeft;
         Width = width;
         Height = height;
     }
 
-    private static bool IsValidDimensions(int width, int height) => width > 0 && height > 0;
-    private static bool IsValidPosition(int x, int y) => x >= 0 && y >= 0;
+    private static bool IsValidLocation(Location location) => location.X >= 0 && location.Y >= 0;
 }
 
