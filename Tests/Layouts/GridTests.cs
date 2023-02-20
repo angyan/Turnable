@@ -54,23 +54,35 @@ public class GridTests
 
     [Theory]
     [MemberData(nameof(AllNeighbors))]
-    internal void Getting_all_possible_neighbors_for_a_location(Location location, List<Location> expectedNeighbors)
+    internal void Getting_all_possible_neighbors(Location location, ImmutableList<Location> expectedNeighbors)
     {
         Bounds sut = new(new Location(3, 4), 10, 5);
 
-        List<Location> neighbors = sut.GetNeighbors(location);
+        ImmutableList<Location> neighbors = sut.GetNeighbors(location);
 
         neighbors.Should().BeEquivalentTo(expectedNeighbors);
     }
 
     [Theory]
-    [MemberData(nameof(Neighbors))]
-    internal void Getting_only_neighbors_contained_within_some_bounds_for_a_location(Location location,
-        List<Location> expectedNeighbors)
+    [MemberData(nameof(ContainedNeighbors))]
+    internal void Getting_only_neighbors_contained_within_some_bounds(Location location,
+        ImmutableList<Location> expectedNeighbors)
     {
         Bounds sut = new(new Location(3, 4), 10, 5);
 
-        List<Location> neighbors = sut.GetContainedNeighbors(location, (_, _) => true);
+        ImmutableList<Location> neighbors = sut.GetContainedNeighbors(location);
+
+        neighbors.Should().BeEquivalentTo(expectedNeighbors);
+    }
+
+    [Theory]
+    [MemberData(nameof(ContainedNonDiagonalNeighbors))]
+    internal void Getting_only_non_diagonal_neighbors_contained_within_some_bounds(Location location,
+        ImmutableList<Location> expectedNeighbors)
+    {
+        Bounds sut = new(new Location(3, 4), 10, 5);
+
+        ImmutableList<Location> neighbors = sut.GetContainedNonDiagonalNeighbors(location);
 
         neighbors.Should().BeEquivalentTo(expectedNeighbors);
     }
@@ -97,8 +109,8 @@ public class GridTests
         yield return new object[]
         {
             new Location(3, 4),
-            new List<Location>
-            {
+            ImmutableList.Create<Location>
+            (
                 new Location(2, 4),
                 new Location(2, 3),
                 new Location(3, 3),
@@ -106,16 +118,16 @@ public class GridTests
                 new Location(4, 4),
                 new Location(4, 5),
                 new Location(3, 5),
-                new Location(2, 5),
-            }
+                new Location(2, 5)
+            )
         };
 
         // Neighbors for a location away from all edges
         yield return new object[]
         {
             new Location(4, 5),
-            new List<Location>
-            {
+            ImmutableList.Create<Location>
+            (
                 new Location(3, 4),
                 new Location(4, 4),
                 new Location(5, 4),
@@ -123,12 +135,12 @@ public class GridTests
                 new Location(5, 6),
                 new Location(4, 6),
                 new Location(3, 6),
-                new Location(3, 5),
-            }
+                new Location(3, 5)
+            )
         };
     }
 
-    private static IEnumerable<object[]> Neighbors()
+    private static IEnumerable<object[]> ContainedNeighbors()
     {
         Bounds bounds = new(new Location(3, 4), 10, 5);
 
@@ -136,56 +148,56 @@ public class GridTests
         yield return new object[]
         {
             new Location(3, 4),
-            new List<Location>
-            {
+            ImmutableList.Create<Location>
+            (
                 new Location(4, 4),
                 new Location(4, 5),
-                new Location(3, 5),
-            }
+                new Location(3, 5)
+            )
         };
 
         // Neighbors for top right corner
         yield return new object[]
         {
             new Location(12, 4),
-            new List<Location>
-            {
+            ImmutableList.Create<Location>
+            (
                 new Location(11, 4),
                 new Location(11, 5),
-                new Location(12, 5),
-            }
+                new Location(12, 5)
+            )
         };
 
         // Neighbors for bottom right corner
         yield return new object[]
         {
             new Location(12, 8),
-            new List<Location>
-            {
+            ImmutableList.Create<Location>
+            (
                 new Location(11, 8),
                 new Location(11, 7),
-                new Location(12, 7),
-            }
+                new Location(12, 7)
+            )
         };
 
         // Neighbors for bottom left corner
         yield return new object[]
         {
             new Location(3, 8),
-            new List<Location>
-            {
+            ImmutableList.Create<Location>
+            (
                 new Location(4, 8),
                 new Location(3, 7),
-                new Location(4, 7),
-            }
+                new Location(4, 7)
+            )
         };
 
         // Neighbors for a location away from all edges
         yield return new object[]
         {
             new Location(4, 5),
-            new List<Location>
-            {
+            ImmutableList.Create<Location>
+            (
                 new Location(3, 4),
                 new Location(4, 4),
                 new Location(5, 4),
@@ -193,8 +205,71 @@ public class GridTests
                 new Location(5, 6),
                 new Location(4, 6),
                 new Location(3, 6),
-                new Location(3, 5),
-            }
+                new Location(3, 5)
+            )
+        };
+    }
+
+    private static IEnumerable<object[]> ContainedNonDiagonalNeighbors()
+    {
+        Bounds bounds = new(new Location(3, 4), 10, 5);
+
+        // Neighbors for top left corner
+        yield return new object[]
+        {
+            new Location(3, 4),
+            ImmutableList.Create<Location>
+            (
+                new Location(4, 4),
+                new Location(3, 5)
+            )
+        };
+
+        // Neighbors for top right corner
+        yield return new object[]
+        {
+            new Location(12, 4),
+            ImmutableList.Create<Location>
+            (
+                new Location(11, 4),
+                new Location(12, 5)
+            )
+        };
+
+        // Neighbors for bottom right corner
+        yield return new object[]
+        {
+            new Location(12, 8),
+            ImmutableList.Create<Location>
+            (
+                new Location(11, 8),
+                new Location(12, 7)
+            )
+        };
+
+        // Neighbors for bottom left corner
+        yield return new object[]
+        {
+            new Location(3, 8),
+            ImmutableList.Create<Location>
+            (
+                new Location(4, 8),
+                new Location(3, 7)
+            )
+        };
+
+        // Neighbors for a location away from all edges
+        yield return new object[]
+        {
+            new Location(4, 5),
+            ImmutableList.Create<Location>
+            (
+                new Location(4, 4),
+                new Location(5, 5),
+                new Location(4, 6),
+                new Location(3, 5)
+            )
         };
     }
 }
+

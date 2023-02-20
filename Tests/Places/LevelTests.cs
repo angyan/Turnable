@@ -40,20 +40,20 @@ public class LevelTests
 
         ImmutableList<Location> obstacles = sut.GetObstacles();
 
-        obstacles.Count.Should().Be(87); // Any non-zero Global Tile Id is an obstacle
+        obstacles.Count.Should().Be(89); // Any non-zero Global Tile Id is an obstacle
         obstacles.Should().Contain(new Location(0, 0));
         obstacles.Should().NotContain(new Location(2, 1));
     }
 
     [Fact]
-    public void Getting_the_graph_for_a_layer()
+    public void Getting_the_graph_for_a_layer_including_diagonal_neighbors()
     {
         MapFilePath mapFilePath = new("../../../Fixtures/orthogonal_csv_right_down_map_dimensions_16x16_tile_dimensions_32x32_not_empty.tmj");
         MapJsonString mapJsonString = new(File.ReadAllText(mapFilePath));
         Map map = mapJsonString.Deserialize();
         Layer sut = map.Layers[1];
 
-        ImmutableDictionary<Location, ImmutableList<Location>> graph = sut.GetGraph(ImmutableList.Create<Layer>(map.Layers[1]));
+        ImmutableDictionary<Location, ImmutableList<Location>> graph = sut.GetGraph(ImmutableList.Create<Layer>(map.Layers[1]), allowDiagonal: true);
 
         graph.Count.Should().Be(256); // Each location in the layer is a possible node (even if it's not walkable)
         // Based on how this map is set up, each corner of the lowermost layer should have just 1 walkable neighbor
@@ -63,7 +63,30 @@ public class LevelTests
         graph[new Location(15, 15)].Count.Should().Be(1);
         // Based on how this map is set up, test how many neighbors a few other nodes have
         graph[new Location(1, 14)].Count.Should().Be(3);
-        graph[new Location(2, 3)].Count.Should().Be(3);
-        graph[new Location(3, 4)].Count.Should().Be(5);
+        graph[new Location(2, 3)].Count.Should().Be(0);
+        graph[new Location(3, 4)].Count.Should().Be(6);
     }
+
+    [Fact]
+    public void Getting_the_graph_for_a_layer_excluding_non_diagonal_neighbors()
+    {
+        MapFilePath mapFilePath = new("../../../Fixtures/orthogonal_csv_right_down_map_dimensions_16x16_tile_dimensions_32x32_not_empty.tmj");
+        MapJsonString mapJsonString = new(File.ReadAllText(mapFilePath));
+        Map map = mapJsonString.Deserialize();
+        Layer sut = map.Layers[1];
+
+        ImmutableDictionary<Location, ImmutableList<Location>> graph = sut.GetGraph(ImmutableList.Create<Layer>(map.Layers[1]), allowDiagonal: false);
+
+        graph.Count.Should().Be(256); // Each location in the layer is a possible node (even if it's not walkable)
+        // Based on how this map is set up, each corner of the lowermost layer should have just 1 walkable neighbor
+        graph[new Location(0, 0)].Count.Should().Be(0);
+        graph[new Location(15, 0)].Count.Should().Be(0);
+        graph[new Location(0, 15)].Count.Should().Be(0);
+        graph[new Location(15, 15)].Count.Should().Be(0);
+        // Based on how this map is set up, test how many neighbors a few other nodes have
+        graph[new Location(1, 14)].Count.Should().Be(2);
+        graph[new Location(2, 3)].Count.Should().Be(0);
+        graph[new Location(3, 4)].Count.Should().Be(2);
+    }
+
 }

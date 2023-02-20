@@ -35,6 +35,6 @@ public class DimensionTests
 
         Dimension result = sut;
 
-        result.Should().Be(new Dimension(1));
+        result.Value.Should().Be(1);
     }
 }

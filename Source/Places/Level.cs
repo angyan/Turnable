@@ -1,5 +1,4 @@
 ﻿using System.Collections.Immutable;
-using Turnable.AI.Pathfinding;
 using Turnable.Layouts;
 using Turnable.Tiled;
 using Turnable.TiledMap;
@@ -18,17 +17,24 @@ internal static class Level
             select location)
         .ToImmutableList();
 
-    internal static ImmutableDictionary<Location, ImmutableList<Location>> NodesAnWalkableNeighbors(this Layer layer, ImmutableList<Layer> obstacleLayers)
+    private static ImmutableDictionary<Location, ImmutableList<Location>> ConstructGraph(this Layer layer, ImmutableList<Layer> obstacleLayers, Func<Bounds, Location, Func<Location, bool>, ImmutableList<Location>> getNeighborsFunc)
     {
         IImmutableSet<Location> allObstacles = obstacleLayers.SelectMany(l => l.GetObstacles()).ToImmutableHashSet();
-        bool IncludeFunc(Bounds bounds, Location location) => !allObstacles.Contains(location);
+        bool IncludeFunc(Location location) => !allObstacles.Contains(location);
 
         Dictionary<Location, ImmutableList<Location>> dictionary =
             (from location in layer.GetBounds().GetLocations()
-                let walkableNeighbors = layer.GetBounds().GetContainedNeighbors(location, IncludeFunc)
+                let bounds = layer.GetBounds()
+                let walkableNeighbors = getNeighborsFunc(bounds, location, IncludeFunc)
                 select new KeyValuePair<Location, ImmutableList<Location>>(location,
                     walkableNeighbors.ToImmutableList())).ToDictionary(pair => pair.Key, pair => pair.Value);
 
         return dictionary.ToImmutableDictionary();
     }
+
+    internal static ImmutableDictionary<Location, ImmutableList<Location>> GetGraph(this Layer layer,
+        ImmutableList<Layer> obstacleLayers, bool allowDiagonal) =>
+        (allowDiagonal
+            ? ConstructGraph(layer, obstacleLayers, Grid.GetContainedNeighbors)
+            : ConstructGraph(layer, obstacleLayers, Grid.GetContainedNonDiagonalNeighbors));
 }
