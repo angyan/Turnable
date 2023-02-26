@@ -21,7 +21,7 @@ public class DimensionTests
     [Fact]
     internal void A_dimension_can_be_implicitly_cast_to_an_int()
     {
-        Dimension sut = new Dimension(1);
+        Dimension sut = new(1);
 
         int result = sut;
 

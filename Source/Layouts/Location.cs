@@ -4,4 +4,4 @@
 
 namespace Turnable.Layouts;
 
-internal readonly record struct Location(int X, int Y);
+public readonly record struct Location(Coordinate X, Coordinate Y);

@@ -3,10 +3,10 @@ using Turnable.Layouts;
 
 namespace Turnable.AI.Pathfinding;
 
-internal static class Pathfinder
+public static class Pathfinder
 {
     // Reference: https://www.redblobgames.com/pathfinding/a-star/implementation.html
-    internal static Func<Location, Location, ImmutableList<Location>> GetPathfinder(this Graph layerGraph)
+    public static Func<Location, Location, ImmutableList<Location>> GetPathfinder(this Graph layerGraph)
     {
         double Heuristic(Location a, Location b) => Math.Abs(a.X - b.X) + Math.Abs(a.Y - b.Y);
 

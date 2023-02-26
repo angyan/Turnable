@@ -1,10 +1,10 @@
 ﻿namespace Turnable.Tiled;
 
-internal record MapJsonString
+public record MapJsonString
 {
     internal string Value { get; init; }
 
-    internal MapJsonString(string value)
+    public MapJsonString(string value)
     {
         if (!IsValid(value)) throw new ArgumentException($"{(value == null ? "null" : "\"null\"")} is not a valid value for constructing a JsonString");
 

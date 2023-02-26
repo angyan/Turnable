@@ -2,12 +2,12 @@
 
 namespace Turnable.Tiled;
 
-internal record TilesetFilePath
+public record TilesetFilePath
 {
     internal string Value { get; init; }
     internal ImmutableArray<string> SupportedExtensions = new[] { ".json", ".JSON", ".tsj", ".TSJ" }.ToImmutableArray();
 
-    internal TilesetFilePath(string value)
+    public TilesetFilePath(string value)
     {
         if (!IsValid(value)) throw new ArgumentException($"{Path.GetExtension(value)} is not a supported file extension for a Tiled Tileset");
 

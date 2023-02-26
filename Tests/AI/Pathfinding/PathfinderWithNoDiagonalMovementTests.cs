@@ -10,7 +10,7 @@ namespace Tests.AI.Pathfinding;
 
 public class PathfinderWithNoDiagonalMovementTests
 {
-    private Func<Location, Location, ImmutableList<Location>>? _pathfinder = null;
+    private Func<Location, Location, ImmutableList<Location>>? _pathfinder;
 
     [Fact]
     internal void Getting_a_pathfinder_from_a_graph()
@@ -20,7 +20,7 @@ public class PathfinderWithNoDiagonalMovementTests
         MapJsonString mapJsonString = new(File.ReadAllText(mapFilePath));
         Map map = mapJsonString.Deserialize();
         Layer layer = map.Layers[1];
-        Graph sut = new Graph(layer.GetGraph(ImmutableList.Create<Layer>(map.Layers[1]), allowDiagonal: false));
+        Graph sut = new Graph(layer.GetGraph(ImmutableList.Create(map.Layers[1]), allowDiagonal: false));
 
         Func<Location, Location, ImmutableList<Location>> pathfinder = sut.GetPathfinder();
 
@@ -122,7 +122,7 @@ public class PathfinderWithNoDiagonalMovementTests
         MapJsonString mapJsonString = new(File.ReadAllText(mapFilePath));
         Map map = mapJsonString.Deserialize();
         Layer layer = map.Layers[1];
-        ImmutableList<Layer> obstacleLayers = ImmutableList.Create<Layer>(map.Layers[1]);
+        ImmutableList<Layer> obstacleLayers = ImmutableList.Create(map.Layers[1]);
         Graph graph = new Graph(layer.GetGraph(obstacleLayers, allowDiagonal: false));
         _pathfinder = graph.GetPathfinder();
 

@@ -8,9 +8,9 @@ namespace Tests.AI.Pathfinding;
 public class GraphTests
 {
     [Fact]
-    internal void A_graph_can_be_implicitly_cast_to_an_immutable_dictionary_of_nodes_and_connections()
+    internal void A_graph_can_be_implicitly_cast_to_an_immutable_dictionary()
     {
-        Graph sut = new Graph(ImmutableDictionary<Location, ImmutableList<Location>>.Empty);
+        Graph sut = new(ImmutableDictionary<Location, ImmutableList<Location>>.Empty);
 
         ImmutableDictionary<Location, ImmutableList<Location>> result = sut;
 
@@ -18,7 +18,7 @@ public class GraphTests
     }
 
     [Fact]
-    internal void A_dictionary_of_nodes_and_connections_can_be_implicitly_cast_to_a_graph()
+    internal void An_immutable_dictionary_can_be_implicitly_cast_to_a_graph()
     {
         ImmutableDictionary<Location, ImmutableList<Location>> sut = ImmutableDictionary<Location, ImmutableList<Location>>.Empty;
 

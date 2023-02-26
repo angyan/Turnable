@@ -31,6 +31,41 @@ public class LevelTests
     }
 
     [Fact]
+    internal void Getting_the_global_tile_id_at_a_particular_location()
+    {
+        MapFilePath mapFilePath = new("../../../Fixtures/orthogonal_csv_right_down_map_dimensions_16x16_tile_dimensions_32x32_not_empty.tmj");
+        MapJsonString mapJsonString = new(File.ReadAllText(mapFilePath));
+        Map map = mapJsonString.Deserialize();
+
+        int tileAt00 = map.Layers[1].GetTileGid(new Location(0, 0));
+        int tileAt10 = map.Layers[1].GetTileGid(new Location(1, 0));
+        int tileAt01 = map.Layers[1].GetTileGid(new Location(0, 1));
+
+        tileAt00.Should().Be(948);
+        tileAt10.Should().Be(949);
+        tileAt01.Should().Be(997);
+    }
+
+    [Theory]
+    [InlineData(1, 0, 0)]
+    [InlineData(2, 1, 0)]
+    [InlineData(50, 0, 1)]
+    [InlineData(51, 1, 1)]
+    internal void Getting_the_atlas_location_for_a_global_tile_id_in_a_tileset(int globalTileId, int atlasX, int atlasY)
+    {
+        MapFilePath mapFilePath = new("../../../Fixtures/orthogonal_csv_right_down_map_dimensions_16x16_tile_dimensions_32x32_not_empty.tmj");
+        MapJsonString mapJsonString = new(File.ReadAllText(mapFilePath));
+        Map map = mapJsonString.Deserialize();
+        TilesetFilePath tilesetFilePath = new("../../../Fixtures/tileset.tsj");
+        TilesetJsonString tilesetJsonString = new(File.ReadAllText(tilesetFilePath));
+        Tileset sut = map.Tilesets[0].DeserializeAndMerge(tilesetJsonString);
+
+        Location atlasLocation = sut.GetAtlasLocation(globalTileId);
+
+        atlasLocation.Should().Be(new Location(atlasX, atlasY));
+    }
+
+    [Fact]
     public void Converting_a_layer_to_individual_obstacles()
     {
         MapFilePath mapFilePath = new("../../../Fixtures/orthogonal_csv_right_down_map_dimensions_16x16_tile_dimensions_32x32_not_empty.tmj");

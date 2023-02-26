@@ -1,10 +1,10 @@
 ﻿namespace Turnable.Tiled;
 
-internal record TilesetJsonString
+public record TilesetJsonString
 {
     internal string Value { get; init; }
 
-    internal TilesetJsonString(string value)
+    public TilesetJsonString(string value)
     {
         if (!IsValid(value)) throw new ArgumentException($"{(value == null ? "null" : "\"null\"")} is not a valid value for constructing a JsonString");
 
