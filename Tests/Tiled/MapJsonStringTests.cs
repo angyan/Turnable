@@ -34,14 +34,4 @@ public class MapJsonStringTests
 
         mapJson.Should().Be("{}");
     }
-
-    [Fact]
-    internal void String_can_be_implicitly_converted_to_a_map_json_string()
-    {
-        string mapJson = "{}";
-
-        MapJsonString mapJsonString = mapJson;
-
-        mapJsonString.Value.Should().Be("{}");
-    }
 }

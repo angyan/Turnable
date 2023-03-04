@@ -1,7 +1,6 @@
-﻿namespace GodotUtilities
-{
-    public class Class1
-    {
+﻿namespace GodotUtilities;
 
-    }
+public class Class1
+{
+
 }

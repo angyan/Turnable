@@ -11,7 +11,6 @@ public record MapJsonString
         Value = value;
     }
 
-    public static implicit operator MapJsonString(string value) => new(value);
     public static implicit operator string(MapJsonString mapJsonString) => mapJsonString.Value;
 
     private bool IsValid(string value) => value != null && value != "null";

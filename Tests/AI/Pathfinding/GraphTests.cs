@@ -8,22 +8,30 @@ namespace Tests.AI.Pathfinding;
 public class GraphTests
 {
     [Fact]
-    internal void A_graph_can_be_implicitly_cast_to_an_immutable_dictionary()
+    internal void Indexing_into_the_dictionary_value()
     {
-        Graph sut = new(ImmutableDictionary<Location, ImmutableList<Location>>.Empty);
+        Dictionary<Location, ImmutableList<Location>> dictionary = new()
+        {
+            { new(1, 1), ImmutableList.Create(new Location(1, 2)) },
+            { new(1, 2), ImmutableList.Create(new Location(1, 1)) }
+        };
 
-        ImmutableDictionary<Location, ImmutableList<Location>> result = sut;
+        Graph sut = new(dictionary.ToImmutableDictionary());
 
-        result.Should().NotBeNull();
+        sut[new(1, 1)].Should().BeEquivalentTo(ImmutableList.Create(new Location(1, 2)));
     }
 
     [Fact]
-    internal void An_immutable_dictionary_can_be_implicitly_cast_to_a_graph()
+    internal void Returning_the_count_of_nodes()
     {
-        ImmutableDictionary<Location, ImmutableList<Location>> sut = ImmutableDictionary<Location, ImmutableList<Location>>.Empty;
+        Dictionary<Location, ImmutableList<Location>> dictionary = new()
+        {
+            { new(1, 1), ImmutableList.Create(new Location(1, 2)) },
+            { new(1, 2), ImmutableList.Create(new Location(1, 1)) }
+        };
 
-        Graph result = sut;
+        Graph sut = new(dictionary.ToImmutableDictionary());
 
-        result.Value.Should().BeEquivalentTo(ImmutableDictionary<Location, ImmutableList<Location>>.Empty);
+        sut.Count.Should().Be(2);
     }
 }

@@ -1,42 +1,48 @@
 ﻿using System.Collections.Immutable;
 using Turnable.Layouts;
+using Turnable.Places;
+using Turnable.TiledMap;
 
 namespace Turnable.AI.Pathfinding;
 
 public static class Pathfinder
 {
     // Reference: https://www.redblobgames.com/pathfinding/a-star/implementation.html
-    public static Func<Location, Location, ImmutableList<Location>> GetPathfinder(this Graph layerGraph)
+    public static PathfinderFunc GetPathfinderFunc(this Map map, int layerIndex,
+        CollisionMasks collisionMasks, bool allowDiagonal) =>
+        map.GetGraph(layerIndex, collisionMasks, allowDiagonal).ConstructPathfinderFunc();
+
+    private static PathfinderFunc ConstructPathfinderFunc(this Graph layerGraph)
     {
         double Heuristic(Location a, Location b) => Math.Abs(a.X - b.X) + Math.Abs(a.Y - b.Y);
 
-        ImmutableList<Location> ReconstructPath(Dictionary<Location, Location> cameFrom, Location start, Location end)
+        Path ReconstructPath(Dictionary<Location, Location> cameFrom, Location start, Location end)
         {
             // Path not found
             if (!cameFrom.ContainsKey(end))
             {
-                return ImmutableList.Create<Location>();
+                return new Path(ImmutableList.Create<Location>());
             }
 
             Location current = end;
-            List<Location> path = new();
+            List<Location> nodes = new();
             while (current != start)
             {
-                path.Add(current);
+                nodes .Add(current);
                 current = cameFrom[current];
             }
 
-            path.Add(start);
-            path.Reverse();
+            nodes .Add(start);
+            nodes .Reverse();
 
-            return path.ToImmutableList();
+            return new Path(nodes.ToImmutableList());
         }
 
-        return (start, end) =>
+        Path PathfinderFunc(Location start, Location end)
         {
             Dictionary<Location, Location> cameFrom = new();
             Dictionary<Location, double> costSoFar = new();
-            ImmutableDictionary<Location, ImmutableList<Location>> graph = layerGraph;
+            Graph graph = layerGraph;
 
             PriorityQueue<Location, double> frontier = new();
             frontier.Enqueue(start, 0);
@@ -67,6 +73,8 @@ public static class Pathfinder
             }
 
             return ReconstructPath(cameFrom, start, end);
-        };
+        }
+
+        return PathfinderFunc;
     }
 }

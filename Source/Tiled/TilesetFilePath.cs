@@ -14,7 +14,6 @@ public record TilesetFilePath
         Value = value;
     }
 
-    public static implicit operator TilesetFilePath(string value) => new(value);
     public static implicit operator string(TilesetFilePath tilesetFilePath) => tilesetFilePath.Value;
 
     private bool IsValid(string value) => SupportedExtensions.Contains(Path.GetExtension(value));

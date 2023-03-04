@@ -6,8 +6,8 @@ internal static class Grid
 {
     internal static bool Contains(this Bounds bounds, Location location) =>
         location.X >= bounds.TopLeft.X && location.Y >= bounds.TopLeft.Y
-                                      && location.X <= bounds.TopLeft.X + bounds.Width - 1
-                                      && location.Y <= bounds.TopLeft.Y + bounds.Height - 1;
+                                      && location.X <= bounds.TopLeft.X + bounds.Dimensions.Width - 1
+                                      && location.Y <= bounds.TopLeft.Y + bounds.Dimensions.Height - 1;
     internal static ImmutableList<Location> GetNeighbors(this Bounds bounds, Location location, Func<Location, bool> includeLocationPredicateFunc)
     {
         int[] xOffsets = { -1, 0, 1 };
@@ -61,8 +61,8 @@ internal static class Grid
     }
 
     internal static ImmutableList<Location> GetLocations(this Bounds bounds) =>
-        (from x in Enumerable.Range(bounds.TopLeft.X, bounds.Width)
-            from y in Enumerable.Range(bounds.TopLeft.Y, bounds.Height)
+        (from x in Enumerable.Range(bounds.TopLeft.X, bounds.Dimensions.Width)
+            from y in Enumerable.Range(bounds.TopLeft.Y, bounds.Dimensions.Height)
             select new Location(x, y))
         .ToImmutableList();
 

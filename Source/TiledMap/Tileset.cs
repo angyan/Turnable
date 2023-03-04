@@ -1,5 +1,3 @@
-using System.Xml.Serialization;
-
 namespace Turnable.TiledMap;
 
 public record Tileset(

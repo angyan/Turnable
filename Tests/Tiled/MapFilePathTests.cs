@@ -42,13 +42,4 @@ public class MapFilePathTests
 
         filePath.Should().Be("map.tmj");
     }
-
-    [Fact] internal void String_can_be_implicitly_converted_to_a_map_file_path()
-    {
-        string filePath = "map.tmj";
-
-        MapFilePath mapFilePath = filePath;
-
-        mapFilePath.Value.Should().Be("map.tmj");
-    }
 }

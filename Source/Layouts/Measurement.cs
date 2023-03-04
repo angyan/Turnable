@@ -1,18 +1,18 @@
 ﻿namespace Turnable.Layouts;
 
-internal readonly record struct Dimension
+public readonly record struct Measurement
 {
     public int Value { get; init; }
 
-    internal Dimension(int value)
+    internal Measurement(int value)
     {
         if (!IsValid(value)) throw new ArgumentException($"{value} is not a valid value for a Dimension; it has to be positive and greater than 0");
 
         Value = value;
     }
 
-    public static implicit operator Dimension(int value) => new(value);
-    public static implicit operator int(Dimension dimension) => dimension.Value; 
+    public static implicit operator Measurement(int value) => new(value);
+    public static implicit operator int(Measurement dimension) => dimension.Value; 
 
     private static bool IsValid(int value) => value > 0;
 }

@@ -3,18 +3,16 @@
 internal readonly record struct Bounds
 {
     internal Location TopLeft { get; init; }
-    internal Dimension Width { get; init; }
-    internal Dimension Height { get; init; }
+    internal Size Dimensions { get; init; }
 
-    internal Bounds(Location topLeft, Dimension width, Dimension height)
+    internal Bounds(Location topLeft, Size dimensions)
     {
-        if (!IsValidLocation(topLeft)) throw new ArgumentException($"{topLeft} is not a valid Location for a Bounds");
+        if (!IsValid(topLeft)) throw new ArgumentException($"{topLeft} is not a valid Location for a Bounds");
 
         TopLeft = topLeft;
-        Width = width;
-        Height = height;
+        Dimensions = dimensions;
     }
 
-    private static bool IsValidLocation(Location location) => location.X >= 0 && location.Y >= 0;
+    private static bool IsValid(Location location) => location.X >= 0 && location.Y >= 0;
 }
 

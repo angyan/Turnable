@@ -3,25 +3,25 @@ using Turnable.Layouts;
 
 namespace Tests.Layouts;
 
-public class DimensionTests
+public class MeasurementTests
 {
     [Theory]
     [InlineData(0)]
     [InlineData(-1)]
-    internal void A_dimension_is_positive_and_greater_than_zero(int value)
+    internal void A_measurement_is_positive_and_greater_than_zero(int value)
     {
         // No arrange
 
-        Action construction = () => new Dimension(value);
+        Action construction = () => new Measurement(value);
 
         construction.Should().Throw<ArgumentException>()
             .WithMessage($"{value} is not a valid value for a Dimension; it has to be positive and greater than 0");
     }
 
     [Fact]
-    internal void A_dimension_can_be_implicitly_cast_to_an_int()
+    internal void A_measurement_can_be_implicitly_cast_to_an_int()
     {
-        Dimension sut = new(1);
+        Measurement sut = new(1);
 
         int result = sut;
 
@@ -29,11 +29,11 @@ public class DimensionTests
     }
 
     [Fact]
-    internal void An_int_can_be_implicitly_cast_to_a_dimension()
+    internal void An_int_can_be_implicitly_cast_to_a_measurement()
     {
         int sut = 1;
 
-        Dimension result = sut;
+        Measurement result = sut;
 
         result.Value.Should().Be(1);
     }

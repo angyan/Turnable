@@ -11,7 +11,6 @@ public record TilesetJsonString
         Value = value;
     }
 
-    public static implicit operator TilesetJsonString(string value) => new TilesetJsonString(value);
     public static implicit operator string(TilesetJsonString tilesetJsonString) => tilesetJsonString.Value;
 
     private static bool IsValid(string value) => value != null && value != "null";

@@ -34,14 +34,4 @@ public class TilesetJsonStringTests
 
         tilesetJson.Should().Be("{}");
     }
-
-    [Fact]
-    internal void String_can_be_implicitly_converted_to_a_tileset_json_string()
-    {
-        string tilesetJson = "{}";
-
-        TilesetJsonString tilesetJsonString = tilesetJson;
-
-        tilesetJsonString.Value.Should().Be("{}");
-    }
 }

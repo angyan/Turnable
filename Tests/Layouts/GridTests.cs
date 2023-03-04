@@ -29,7 +29,7 @@ public class GridTests
     [InlineData(5, 6)]
     internal void Bounds_contains_locations_within_itself(int x, int y)
     {
-        Bounds sut = new(new Location(3, 4), 10, 5);
+        Bounds sut = new(new Location(3, 4), new Size(10, 5));
         Location location = new(x, y);
 
         bool contains = sut.Contains(location);
@@ -44,7 +44,7 @@ public class GridTests
     [InlineData(5, 10)]
     internal void Bounds_does_not_contain_locations_outside_itself(int x, int y)
     {
-        Bounds sut = new(new Location(3, 4), 10, 5);
+        Bounds sut = new(new Location(3, 4), new Size(10, 5));
         Location location = new(x, y);
 
         bool contains = sut.Contains(location);
@@ -56,7 +56,7 @@ public class GridTests
     [MemberData(nameof(AllNeighbors))]
     internal void Getting_all_possible_neighbors(Location location, ImmutableList<Location> expectedNeighbors)
     {
-        Bounds sut = new(new Location(3, 4), 10, 5);
+        Bounds sut = new(new Location(3, 4), new Size(10, 5));
 
         ImmutableList<Location> neighbors = sut.GetNeighbors(location);
 
@@ -68,7 +68,7 @@ public class GridTests
     internal void Getting_only_neighbors_contained_within_some_bounds(Location location,
         ImmutableList<Location> expectedNeighbors)
     {
-        Bounds sut = new(new Location(3, 4), 10, 5);
+        Bounds sut = new(new Location(3, 4), new Size(10, 5));
 
         ImmutableList<Location> neighbors = sut.GetContainedNeighbors(location);
 
@@ -80,7 +80,7 @@ public class GridTests
     internal void Getting_only_non_diagonal_neighbors_contained_within_some_bounds(Location location,
         ImmutableList<Location> expectedNeighbors)
     {
-        Bounds sut = new(new Location(3, 4), 10, 5);
+        Bounds sut = new(new Location(3, 4), new Size(10, 5));
 
         ImmutableList<Location> neighbors = sut.GetContainedNonDiagonalNeighbors(location);
 
@@ -90,7 +90,7 @@ public class GridTests
     [Fact]
     internal void Getting_a_list_of_all_locations_within_a_bounds()
     {
-        Bounds sut = new(new Location(3, 4), 2, 3);
+        Bounds sut = new(new Location(3, 4), new Size(2, 3));
 
         ImmutableList<Location> locations = sut.GetLocations();
 
@@ -111,14 +111,14 @@ public class GridTests
             new Location(3, 4),
             ImmutableList.Create<Location>
             (
-                new Location(2, 4),
-                new Location(2, 3),
-                new Location(3, 3),
-                new Location(4, 3),
-                new Location(4, 4),
-                new Location(4, 5),
-                new Location(3, 5),
-                new Location(2, 5)
+                new(2, 4),
+                new(2, 3),
+                new(3, 3),
+                new(4, 3),
+                new(4, 4),
+                new(4, 5),
+                new(3, 5),
+                new(2, 5)
             )
         };
 
@@ -128,21 +128,21 @@ public class GridTests
             new Location(4, 5),
             ImmutableList.Create<Location>
             (
-                new Location(3, 4),
-                new Location(4, 4),
-                new Location(5, 4),
-                new Location(5, 5),
-                new Location(5, 6),
-                new Location(4, 6),
-                new Location(3, 6),
-                new Location(3, 5)
+                new(3, 4),
+                new(4, 4),
+                new(5, 4),
+                new(5, 5),
+                new(5, 6),
+                new(4, 6),
+                new(3, 6),
+                new(3, 5)
             )
         };
     }
 
     private static IEnumerable<object[]> ContainedNeighbors()
     {
-        Bounds bounds = new(new Location(3, 4), 10, 5);
+        Bounds bounds = new(new(3, 4), new(10, 5));
 
         // Neighbors for top left corner
         yield return new object[]
@@ -150,9 +150,9 @@ public class GridTests
             new Location(3, 4),
             ImmutableList.Create<Location>
             (
-                new Location(4, 4),
-                new Location(4, 5),
-                new Location(3, 5)
+                new(4, 4),
+                new(4, 5),
+                new(3, 5)
             )
         };
 
@@ -162,9 +162,9 @@ public class GridTests
             new Location(12, 4),
             ImmutableList.Create<Location>
             (
-                new Location(11, 4),
-                new Location(11, 5),
-                new Location(12, 5)
+                new(11, 4),
+                new(11, 5),
+                new(12, 5)
             )
         };
 
@@ -174,9 +174,9 @@ public class GridTests
             new Location(12, 8),
             ImmutableList.Create<Location>
             (
-                new Location(11, 8),
-                new Location(11, 7),
-                new Location(12, 7)
+                new(11, 8),
+                new(11, 7),
+                new(12, 7)
             )
         };
 
@@ -186,9 +186,9 @@ public class GridTests
             new Location(3, 8),
             ImmutableList.Create<Location>
             (
-                new Location(4, 8),
-                new Location(3, 7),
-                new Location(4, 7)
+                new(4, 8),
+                new(3, 7),
+                new(4, 7)
             )
         };
 
@@ -198,21 +198,21 @@ public class GridTests
             new Location(4, 5),
             ImmutableList.Create<Location>
             (
-                new Location(3, 4),
-                new Location(4, 4),
-                new Location(5, 4),
-                new Location(5, 5),
-                new Location(5, 6),
-                new Location(4, 6),
-                new Location(3, 6),
-                new Location(3, 5)
+                new(3, 4),
+                new(4, 4),
+                new(5, 4),
+                new(5, 5),
+                new(5, 6),
+                new(4, 6),
+                new(3, 6),
+                new(3, 5)
             )
         };
     }
 
     private static IEnumerable<object[]> ContainedNonDiagonalNeighbors()
     {
-        Bounds bounds = new(new Location(3, 4), 10, 5);
+        Bounds bounds = new(new(3, 4), new(10, 5));
 
         // Neighbors for top left corner
         yield return new object[]
@@ -220,8 +220,8 @@ public class GridTests
             new Location(3, 4),
             ImmutableList.Create<Location>
             (
-                new Location(4, 4),
-                new Location(3, 5)
+                new(4, 4),
+                new(3, 5)
             )
         };
 
@@ -231,8 +231,8 @@ public class GridTests
             new Location(12, 4),
             ImmutableList.Create<Location>
             (
-                new Location(11, 4),
-                new Location(12, 5)
+                new(11, 4),
+                new(12, 5)
             )
         };
 
@@ -242,8 +242,8 @@ public class GridTests
             new Location(12, 8),
             ImmutableList.Create<Location>
             (
-                new Location(11, 8),
-                new Location(12, 7)
+                new(11, 8),
+                new(12, 7)
             )
         };
 
@@ -253,8 +253,8 @@ public class GridTests
             new Location(3, 8),
             ImmutableList.Create<Location>
             (
-                new Location(4, 8),
-                new Location(3, 7)
+                new(4, 8),
+                new(3, 7)
             )
         };
 
@@ -264,10 +264,10 @@ public class GridTests
             new Location(4, 5),
             ImmutableList.Create<Location>
             (
-                new Location(4, 4),
-                new Location(5, 5),
-                new Location(4, 6),
-                new Location(3, 5)
+                new(4, 4),
+                new(5, 5),
+                new(4, 6),
+                new(3, 5)
             )
         };
     }

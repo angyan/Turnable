@@ -5,24 +5,23 @@ using Turnable.Layouts;
 using Turnable.Places;
 using Turnable.Tiled;
 using Turnable.TiledMap;
+using Path = Turnable.AI.Pathfinding.Path;
 
 namespace Tests.AI.Pathfinding;
 
 public class PathfinderWithNoDiagonalMovementTests
 {
-    private Func<Location, Location, ImmutableList<Location>>? _pathfinder;
+    private PathfinderFunc? _pathfinder;
 
     [Fact]
-    internal void Getting_a_pathfinder_from_a_graph()
+    internal void Getting_a_pathfinder_from_a_map()
     {
         MapFilePath mapFilePath =
             new("../../../Fixtures/orthogonal_csv_right_down_map_dimensions_16x16_tile_dimensions_32x32_not_empty.tmj");
         MapJsonString mapJsonString = new(File.ReadAllText(mapFilePath));
-        Map map = mapJsonString.Deserialize();
-        Layer layer = map.Layers[1];
-        Graph sut = new Graph(layer.GetGraph(ImmutableList.Create(map.Layers[1]), allowDiagonal: false));
+        Map sut = mapJsonString.Deserialize();
 
-        Func<Location, Location, ImmutableList<Location>> pathfinder = sut.GetPathfinder();
+        PathfinderFunc pathfinder = sut.GetPathfinderFunc(0, new[]{1}, allowDiagonal: false);
 
         pathfinder.Should().NotBeNull();
     }
@@ -30,9 +29,9 @@ public class PathfinderWithNoDiagonalMovementTests
     [Fact]
     internal void Finding_a_path_between_two_locations_next_to_each_other()
     {
-        Func<Location, Location, ImmutableList<Location>> sut = CreatePathfinderWithDiagonalPathsAllowed();
+        PathfinderFunc sut = CreatePathfinderWithNoDiagonalPathsAllowed();
 
-        ImmutableList<Location> path = sut(new Location(1, 1), new Location(2, 1));
+        Path path = sut(new Location(1, 1), new Location(2, 1));
 
         path.Should().NotBeNull();
         path.Count.Should().Be(2);
@@ -43,9 +42,9 @@ public class PathfinderWithNoDiagonalMovementTests
     [Fact]
     internal void Finding_a_path_between_two_locations_horizontal_to_each_other()
     {
-        Func<Location, Location, ImmutableList<Location>> sut = CreatePathfinderWithDiagonalPathsAllowed();
+        PathfinderFunc sut = CreatePathfinderWithNoDiagonalPathsAllowed();
 
-        ImmutableList<Location> path = sut(new Location(1, 1), new Location(4, 1));
+        Path path = sut(new Location(1, 1), new Location(4, 1));
 
         path.Should().NotBeNull();
         path.Count.Should().Be(4);
@@ -58,9 +57,9 @@ public class PathfinderWithNoDiagonalMovementTests
     [Fact]
     internal void Finding_a_path_between_two_locations_vertical_to_each_other()
     {
-        Func<Location, Location, ImmutableList<Location>> sut = CreatePathfinderWithDiagonalPathsAllowed();
+        PathfinderFunc sut = CreatePathfinderWithNoDiagonalPathsAllowed();
 
-        ImmutableList<Location> path = sut(new Location(4, 1), new Location(4, 4));
+        Path path = sut(new Location(4, 1), new Location(4, 4));
 
         path.Should().NotBeNull();
         path.Count.Should().Be(4);
@@ -73,9 +72,9 @@ public class PathfinderWithNoDiagonalMovementTests
     [Fact]
     internal void Finding_a_moderately_complex_path_between_two_locations_horizontal_to_each_other_and_obstacles_in_between()
     {
-        Func<Location, Location, ImmutableList<Location>> sut = CreatePathfinderWithDiagonalPathsAllowed();
+        PathfinderFunc sut = CreatePathfinderWithNoDiagonalPathsAllowed();
 
-        ImmutableList<Location> path = sut(new Location(10, 13), new Location(14, 13));
+        Path path = sut(new Location(10, 13), new Location(14, 13));
 
         path.Should().NotBeNull();
         path.Count.Should().Be(9);
@@ -93,9 +92,9 @@ public class PathfinderWithNoDiagonalMovementTests
     [Fact]
     internal void Finding_a_path_when_none_exists()
     {
-        Func<Location, Location, ImmutableList<Location>> sut = CreatePathfinderWithDiagonalPathsAllowed();
+        PathfinderFunc sut = CreatePathfinderWithNoDiagonalPathsAllowed();
 
-        ImmutableList<Location> path = sut(new Location(2, 3), new Location(4, 3));
+        Path path = sut(new Location(2, 3), new Location(4, 3));
 
         path.Should().NotBeNull();
         path.Count.Should().Be(0);
@@ -104,16 +103,16 @@ public class PathfinderWithNoDiagonalMovementTests
     [Fact]
     internal void Finding_a_path_when_the_start_and_end_are_both_unwalkable()
     {
-        Func<Location, Location, ImmutableList<Location>> sut = CreatePathfinderWithDiagonalPathsAllowed();
+        PathfinderFunc sut = CreatePathfinderWithNoDiagonalPathsAllowed();
 
-        ImmutableList<Location> path = sut(new Location(1, 3), new Location(3, 3));
+        Path path = sut(new Location(1, 3), new Location(3, 3));
 
         path.Should().NotBeNull();
         path.Count.Should().Be(0);
     }
 
     // Factory method to create the pathfinder, and cache it for future calls
-    private Func<Location, Location, ImmutableList<Location>> CreatePathfinderWithDiagonalPathsAllowed()
+    private PathfinderFunc CreatePathfinderWithNoDiagonalPathsAllowed()
     {
         if (_pathfinder != null) return _pathfinder;
 
@@ -121,10 +120,7 @@ public class PathfinderWithNoDiagonalMovementTests
             new("../../../Fixtures/orthogonal_csv_right_down_map_dimensions_16x16_tile_dimensions_32x32_not_empty.tmj");
         MapJsonString mapJsonString = new(File.ReadAllText(mapFilePath));
         Map map = mapJsonString.Deserialize();
-        Layer layer = map.Layers[1];
-        ImmutableList<Layer> obstacleLayers = ImmutableList.Create(map.Layers[1]);
-        Graph graph = new Graph(layer.GetGraph(obstacleLayers, allowDiagonal: false));
-        _pathfinder = graph.GetPathfinder();
+        _pathfinder = map.GetPathfinderFunc(0, new[]{1}, allowDiagonal: false);
 
         return _pathfinder;
     }

@@ -5,6 +5,7 @@ namespace Turnable.AI.Pathfinding;
 
 public record Graph(ImmutableDictionary<Location, ImmutableList<Location>> Value)
 {
-    public static implicit operator ImmutableDictionary<Location, ImmutableList<Location>>(Graph graph) => graph.Value; 
-    public static implicit operator Graph(ImmutableDictionary<Location, ImmutableList<Location>> value) => new(value);
+    public int Count => Value.Count;
+
+    public ImmutableList<Location> this[Location location] => Value[location];
 }

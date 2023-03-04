@@ -42,13 +42,4 @@ public class TilesetFilePathTests
 
         filePath.Should().Be("tileset.tsj");
     }
-
-    [Fact] internal void String_can_be_implicitly_converted_to_a_map_file_path()
-    {
-        string filePath = "tileset.tsj";
-
-        TilesetFilePath tilesetFilePath = filePath;
-
-        tilesetFilePath.Value.Should().Be("tileset.tsj");
-    }
 }

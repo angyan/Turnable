@@ -13,7 +13,7 @@ public class BoundsTests
     {
         // No arrange
         
-        Action construction = () => new Bounds(new Location(x, y), 3, 4);
+        Action construction = () => new Bounds(new(x, y), new(3, 4));
 
         construction.Should().Throw<ArgumentException>().WithMessage($"{new Location(x, y)} is not a valid Location for a Bounds");
     }

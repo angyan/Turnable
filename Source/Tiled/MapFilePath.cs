@@ -14,7 +14,6 @@ public record MapFilePath
         Value = value;
     }
 
-    public static implicit operator MapFilePath(string value) => new(value);
     public static implicit operator string(MapFilePath mapFilePath) => mapFilePath.Value;
 
     private bool IsValid(string value) => SupportedExtensions.Contains(Path.GetExtension(value));

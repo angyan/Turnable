@@ -1,15 +1,18 @@
 ﻿using System.Collections.Immutable;
+using Turnable.AI.Pathfinding;
 using Turnable.Layouts;
-using Turnable.Tiled;
 using Turnable.TiledMap;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Turnable.Places;
 
 public static class Level
 {
-    internal static Bounds GetBounds(this Map map) => new(new Location(0, 0), new Dimension(map.Width), new Dimension(map.Height));
+    internal static Bounds GetBounds(this Map map) => new(new(0, 0), new(map.Width, map.Height));
 
-    internal static Bounds GetBounds(this Layer layer) => new(new Location(0, 0), new Dimension(layer.Width), new Dimension(layer.Height));
+    internal static Bounds GetBounds(this Layer layer) => new(new(0, 0), new(layer.Width, layer.Height));
 
     public static int GetTileGid(this Layer layer, Location location)
     {
@@ -31,10 +34,14 @@ public static class Level
             select location)
         .ToImmutableList();
 
-    private static ImmutableDictionary<Location, ImmutableList<Location>> ConstructGraph(this Layer layer, ImmutableList<Layer> obstacleLayers, Func<Bounds, Location, Func<Location, bool>, ImmutableList<Location>> getNeighborsFunc)
+    internal static ImmutableList<Location> GetObstacles(this Map map, CollisionMasks collisionMasks) => (
+        collisionMasks.Value.SelectMany(maskLayerIndex => map.Layers[maskLayerIndex].GetObstacles())).ToImmutableList();
+
+    private static Graph ConstructGraph(this Map map, int layerIndex, CollisionMasks collisionMasks, Func<Bounds, Location, Func<Location, bool>, ImmutableList<Location>> getNeighborsFunc)
     {
-        IImmutableSet<Location> allObstacles = obstacleLayers.SelectMany(l => l.GetObstacles()).ToImmutableHashSet();
+        ImmutableList<Location> allObstacles = map.GetObstacles(collisionMasks);
         bool IncludeFunc(Location location) => !allObstacles.Contains(location);
+        Layer layer = map.Layers[layerIndex];
 
         Dictionary<Location, ImmutableList<Location>> dictionary =
             (from location in layer.GetBounds().GetLocations()
@@ -43,12 +50,12 @@ public static class Level
                 select new KeyValuePair<Location, ImmutableList<Location>>(location,
                     walkableNeighbors.ToImmutableList())).ToDictionary(pair => pair.Key, pair => pair.Value);
 
-        return dictionary.ToImmutableDictionary();
+        return new Graph(dictionary.ToImmutableDictionary());
     }
 
-    public static ImmutableDictionary<Location, ImmutableList<Location>> GetGraph(this Layer layer,
-        ImmutableList<Layer> obstacleLayers, bool allowDiagonal) =>
+    public static Graph GetGraph(this Map map, int layerIndex,
+        CollisionMasks collisionMasks, bool allowDiagonal) =>
         (allowDiagonal
-            ? ConstructGraph(layer, obstacleLayers, Grid.GetContainedNeighbors)
-            : ConstructGraph(layer, obstacleLayers, Grid.GetContainedNonDiagonalNeighbors));
+            ? map.ConstructGraph(layerIndex, collisionMasks, Grid.GetContainedNeighbors)
+            : map.ConstructGraph(layerIndex, collisionMasks, Grid.GetContainedNonDiagonalNeighbors));
 }
