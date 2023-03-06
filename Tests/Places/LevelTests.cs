@@ -104,8 +104,9 @@ public class LevelTests
         MapFilePath mapFilePath = new("../../../Fixtures/orthogonal_csv_right_down_map_dimensions_16x16_tile_dimensions_32x32_not_empty.tmj");
         MapJsonString mapJsonString = new(File.ReadAllText(mapFilePath));
         Map sut = mapJsonString.Deserialize();
+        CollisionMasks collisionMasks = new CollisionMasks(new[] { 1 });
 
-        Graph graph = sut.GetGraph(0, new[]{1}, allowDiagonal: true);
+        Graph graph = sut.GetGraph(0, collisionMasks, allowDiagonal: true);
 
         graph.Count.Should().Be(256); // Each location in the layer is a possible node (even if it's not walkable)
         // Based on how this map is set up, each corner of the lowermost layer should have just 1 walkable neighbor
@@ -125,8 +126,9 @@ public class LevelTests
         MapFilePath mapFilePath = new("../../../Fixtures/orthogonal_csv_right_down_map_dimensions_16x16_tile_dimensions_32x32_not_empty.tmj");
         MapJsonString mapJsonString = new(File.ReadAllText(mapFilePath));
         Map sut = mapJsonString.Deserialize();
+        CollisionMasks collisionMasks = new CollisionMasks(new[] { 1 });
 
-        Graph graph = sut.GetGraph(0, new[]{1}, allowDiagonal: false);
+        Graph graph = sut.GetGraph(0, collisionMasks, allowDiagonal: false);
 
         graph.Count.Should().Be(256); // Each location in the layer is a possible node (even if it's not walkable)
         // Based on how this map is set up, each corner of the lowermost layer should have just 1 walkable neighbor

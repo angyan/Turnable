@@ -3,7 +3,7 @@ using Turnable.Layouts;
 
 namespace Turnable.AI.Pathfinding;
 
-public record Path(ImmutableList<Location> Value)
+public record Path(IImmutableList<Location> Value)
 {
     public virtual bool Equals(Path? other)
     {

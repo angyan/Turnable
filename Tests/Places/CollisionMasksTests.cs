@@ -10,30 +10,8 @@ using Turnable.TiledMap;
 
 namespace Tests.Places;
 
-public class CollisionMasksTests
+public class StatTests
 {
-    [Fact]
-    internal void Collision_masks_can_be_implicitly_converted_to_an_array_of_ints()
-    {
-        Map map = CreateMapWithThreeLayers();
-        CollisionMasks collisionMasks = new(map, 0, new[] { 1, 2 });
-
-        int[] maskLayerIndexes = collisionMasks;
-
-        maskLayerIndexes.Should().BeEquivalentTo(new[] { 1, 2 });
-    }
-
-    [Fact]
-    internal void An_array_of_ints_can_be_implicitly_converted_to_collision_masks()
-    {
-        Map map = CreateMapWithThreeLayers();
-        int[] maskLayerIndexes = new[] { 1, 2 };
-
-        CollisionMasks collisionMasks = maskLayerIndexes;
-
-        collisionMasks.Value.Should().BeEquivalentTo(maskLayerIndexes);
-    }
-
     [Theory]
     [InlineData(0, 1)]
     [InlineData(1, 0)]
@@ -61,7 +39,7 @@ public class CollisionMasksTests
             maskLayerIndexes.Select(maskLayerIndex => maskLayerIndex.ToString()).ToArray());
 
         construction.Should().Throw<ArgumentException>()
-            .WithMessage($"[{readableArrayToString}] is not a valid value for the mask layer indexes; The indexes must be different from the layer index ({layerIndex}) and each value must be within 0 and {map.Layers.Length - 1}");
+            .WithMessage($"[{readableArrayToString}] is not a valid value for the mask layer indexes; The indexes must be different from the layer index ({layerIndex}) and each value must be within 0 and {map.Layers.GetUpperBound(0)}");
     }
 
     private Map CreateMapWithThreeLayers()

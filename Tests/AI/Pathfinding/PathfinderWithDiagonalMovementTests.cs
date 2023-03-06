@@ -20,8 +20,9 @@ public class PathfinderWithDiagonalMovementTests
             new("../../../Fixtures/orthogonal_csv_right_down_map_dimensions_16x16_tile_dimensions_32x32_not_empty.tmj");
         MapJsonString mapJsonString = new(File.ReadAllText(mapFilePath));
         Map sut = mapJsonString.Deserialize();
+        CollisionMasks collisionMasks = new CollisionMasks(new[] { 1 });
         
-        PathfinderFunc pathfinderFunc = sut.GetPathfinderFunc(0, new[] {1}, allowDiagonal: true);
+        PathfinderFunc pathfinderFunc = sut.GetPathfinderFunc(0, collisionMasks, allowDiagonal: true);
 
         pathfinderFunc.Should().NotBeNull();
     }
@@ -116,7 +117,8 @@ public class PathfinderWithDiagonalMovementTests
             new("../../../Fixtures/orthogonal_csv_right_down_map_dimensions_16x16_tile_dimensions_32x32_not_empty.tmj");
         MapJsonString mapJsonString = new(File.ReadAllText(mapFilePath));
         Map map = mapJsonString.Deserialize();
-        _pathfinder = map.GetPathfinderFunc(0, new[]{1}, allowDiagonal: true);
+        CollisionMasks collisionMasks = new CollisionMasks(new[] { 1 });
+        _pathfinder = map.GetPathfinderFunc(0, collisionMasks, allowDiagonal: true);
 
         return _pathfinder;
     }
