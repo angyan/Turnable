@@ -5,7 +5,7 @@ using Turnable.Layouts;
 
 namespace Tests.AI.Pathfinding;
 
-public class GraphTests
+public class PlanTests
 {
     [Fact]
     internal void Indexing_into_the_dictionary_value()

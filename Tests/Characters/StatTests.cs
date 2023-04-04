@@ -77,6 +77,18 @@ public class StatTests
     }
 
     [Fact]
+    internal void An_event_is_raised_when_the_value_is_updated()
+    {
+        Stat sut = new(10, 10, 100);
+        using var monitoredSut = sut.Monitor();
+
+        Stat newStat = sut.Update(50);
+
+        monitoredSut.Should().Raise(nameof(Stat.ValueUpdated)).WithSender(sut)
+            .WithArgs<StatUpdatedArgs>(args => args.NewValue== 50);
+    }
+
+    [Fact]
     internal void An_event_is_not_raised_when_the_value_is_not_clamped()
     {
         Stat sut = new(10, 10, 100);
@@ -89,8 +101,19 @@ public class StatTests
     }
 
     [Fact]
-    internal void An_event_is_raised_when_stats_reach_a_certain_level()
+    internal void All_subscriptions_to_events_are_kept_when_a_stat_is_updated()
     {
+        int subscriber1CallCount = 0;
+        void Subscriber(object sender, StatClampedArgs args)
+        {
+            subscriber1CallCount++;
+        }
+        Stat sut = new(10, 10, 100);
+        sut.MinReached += Subscriber;
 
+        Stat newStat = sut.Update(0);
+        Stat _ = newStat.Update(0);
+
+        subscriber1CallCount.Should().Be(2);
     }
 }

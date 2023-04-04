@@ -54,8 +54,8 @@ internal static class Grid
         Func<Location, bool> includeFunc)
     {
         bool IncludeLocationPredicateFunc(Location locationArgument) =>
-            bounds.Contains(locationArgument) && includeFunc(locationArgument) &&
-            (locationArgument.X == location.X || locationArgument.Y == location.Y);
+            bounds.Contains(locationArgument) &&
+            (locationArgument.X == location.X || locationArgument.Y == location.Y) && includeFunc(locationArgument);
 
         return GetNeighbors(bounds, location, IncludeLocationPredicateFunc);
     }

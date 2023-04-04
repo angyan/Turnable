@@ -1,4 +1,5 @@
 using System.Collections.Immutable;
+using System.Runtime.CompilerServices;
 using FluentAssertions;
 using Turnable.AI.Pathfinding;
 using Turnable.Layouts;
@@ -45,6 +46,19 @@ public class LevelTests
         tileAt00.Should().Be(948);
         tileAt10.Should().Be(949);
         tileAt01.Should().Be(997);
+    }
+
+    [Theory]
+    [InlineData(0, 0, 2, 0)]
+    [InlineData(1, 1, 2, 3)]
+    [InlineData(1, 2, 4, 9)]
+    internal void Getting_the_index_in_a_two_dimensional_data_array_that_corresponds_to_a_location(int x, int y, int width, int expectedIndex)
+    {
+        Location location = new(x, y);
+        
+        int index = Level.GetDataIndex(location, width);
+
+        index.Should().Be(expectedIndex);
     }
 
     [Theory]
@@ -121,6 +135,29 @@ public class LevelTests
     }
 
     [Fact]
+    internal void Getting_the_graph_for_a_layer_including_diagonal_neighbors_and_including_additional_obstacles()
+    {
+        MapFilePath mapFilePath = new("../../../Fixtures/orthogonal_csv_right_down_map_dimensions_16x16_tile_dimensions_32x32_not_empty.tmj");
+        MapJsonString mapJsonString = new(File.ReadAllText(mapFilePath));
+        Map sut = mapJsonString.Deserialize();
+        CollisionMasks collisionMasks = new CollisionMasks(new[] { 1 });
+        List<Location> additionalObstacles = new List<Location>() { new Location(2, 5), new Location(4, 5) };
+
+        Graph graph = sut.GetGraph(0, collisionMasks, allowDiagonal: true, additionalObstacles);
+        
+        graph.Count.Should().Be(256);
+        graph[new Location(0, 0)].Count.Should().Be(1);
+        graph[new Location(15, 0)].Count.Should().Be(1);
+        graph[new Location(0, 15)].Count.Should().Be(1);
+        graph[new Location(15, 15)].Count.Should().Be(1);
+        graph[new Location(1, 14)].Count.Should().Be(3);
+        graph[new Location(2, 3)].Count.Should().Be(0);
+        // Two nodes that were empty in the map are now obstacles
+        graph[new Location(3, 4)].Count.Should().Be(4);
+    }
+
+
+    [Fact]
     internal void Getting_the_graph_for_a_layer_excluding_non_diagonal_neighbors()
     {
         MapFilePath mapFilePath = new("../../../Fixtures/orthogonal_csv_right_down_map_dimensions_16x16_tile_dimensions_32x32_not_empty.tmj");
@@ -140,5 +177,27 @@ public class LevelTests
         graph[new Location(1, 14)].Count.Should().Be(2);
         graph[new Location(2, 3)].Count.Should().Be(0);
         graph[new Location(3, 4)].Count.Should().Be(2);
+    }
+
+    [Fact]
+    internal void Getting_the_graph_for_a_layer_excluding_diagonal_neighbors_and_including_additional_obstacles()
+    {
+        MapFilePath mapFilePath = new("../../../Fixtures/orthogonal_csv_right_down_map_dimensions_16x16_tile_dimensions_32x32_not_empty.tmj");
+        MapJsonString mapJsonString = new(File.ReadAllText(mapFilePath));
+        Map sut = mapJsonString.Deserialize();
+        CollisionMasks collisionMasks = new CollisionMasks(new[] { 1 });
+        List<Location> additionalObstacles = new List<Location>() { new Location(4, 4) };
+
+        Graph graph = sut.GetGraph(0, collisionMasks, allowDiagonal: false, additionalObstacles);
+        
+        graph.Count.Should().Be(256);
+        graph[new Location(0, 0)].Count.Should().Be(0);
+        graph[new Location(15, 0)].Count.Should().Be(0);
+        graph[new Location(0, 15)].Count.Should().Be(0);
+        graph[new Location(15, 15)].Count.Should().Be(0);
+        // One node that was empty in the map is now an obstacle
+        graph[new Location(1, 14)].Count.Should().Be(2);
+        graph[new Location(2, 3)].Count.Should().Be(0);
+        graph[new Location(3, 4)].Count.Should().Be(1);
     }
 }

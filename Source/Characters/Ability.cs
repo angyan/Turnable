@@ -6,5 +6,5 @@ using System.Threading.Tasks;
 
 namespace Turnable.Characters
 {
-    internal readonly record struct Attribute(string Name, string Description, Stat Stat);
+    internal readonly record struct Ability(string Name, string Description, Stat Stat);
 }

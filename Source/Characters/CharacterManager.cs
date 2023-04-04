@@ -18,6 +18,7 @@ internal static class CharacterManager
         }
         else
         {
+            stat.RaiseValueUpdated(newValue);
             return stat with { Value = newValue };
         }
     }
