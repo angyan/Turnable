@@ -44,7 +44,7 @@ public class EffectTests
     {
         Stat targetStat = new(50, 10, 100);
         Ability ability = new("HP", "Hit Points", targetStat);
-        Character character = new("Test", ImmutableList<Ability>.Empty.Add(ability), new Location(0, 0), ImmutableList<Skill>.Empty);
+        Character character = new("Test", ImmutableList<Ability>.Empty.Add(ability), ImmutableList<Skill>.Empty);
         Func<Character, string, int, Character> sut = Effects.CharacterStatDecreaseFunc;
 
         Character newCharacter = sut(character, "HP", 10);
@@ -58,7 +58,7 @@ public class EffectTests
     {
         Stat targetStat = new(50, 10, 100);
         Ability ability = new("HP", "Hit Points", targetStat);
-        Character character = new("Test", ImmutableList<Ability>.Empty.Add(ability), new Location(0, 0), ImmutableList<Skill>.Empty);
+        Character character = new("Test", ImmutableList<Ability>.Empty.Add(ability), ImmutableList<Skill>.Empty);
         Func<Character, string, int, Character> sut = Effects.CharacterStatIncreaseFunc;
 
         Character newCharacter = sut(character, "HP", 10);

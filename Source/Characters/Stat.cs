@@ -9,26 +9,26 @@ namespace Turnable.Characters
     internal record Stat
     {
         internal int Value { get; init; }
-        internal int Min { get; init; }
-        internal int Max { get; init; }
+        internal int Minimum { get; init; }
+        internal int Maximum { get; init; }
 
-        internal Stat(int value, int min, int max)
+        internal Stat(int value, int minimum, int maximum)
         {
-            if (!IsValid(value, min, max)) throw new ArgumentException($"{value} is not a valid value for a Stat that has a Min of {min} and a Max of {max}");
+            if (!IsValid(value, minimum, maximum)) throw new ArgumentException($"{value} is not a valid value for a Stat that has a Min of {minimum} and a Max of {maximum}");
 
             Value = value;
-            Min = min;
-            Max = max;
+            Minimum = minimum;
+            Maximum = maximum;
         }
 
-        public event Action<object, StatClampedArgs>? MinReached;
-        public event Action<object, StatClampedArgs>? MaxReached;
+        public event Action<object, StatClampedArgs>? MinimumReached;
+        public event Action<object, StatClampedArgs>? MaximumReached;
         public event Action<object, StatUpdatedArgs>? ValueUpdated;
 
-        internal void RaiseMinReached(int triedValue) => MinReached?.Invoke(this, new StatClampedArgs(triedValue));
-        internal void RaiseMaxReached(int triedValue) => MaxReached?.Invoke(this, new StatClampedArgs(triedValue));
+        internal void RaiseMinimumReached(int triedValue) => MinimumReached?.Invoke(this, new StatClampedArgs(triedValue));
+        internal void RaiseMaximumReached(int triedValue) => MaximumReached?.Invoke(this, new StatClampedArgs(triedValue));
         internal void RaiseValueUpdated(int newValue) => ValueUpdated?.Invoke(this, new StatUpdatedArgs(newValue));
         
-        private static bool IsValid(int value, int min, int max) => value >= min && value <= max;
+        private static bool IsValid(int value, int minimum, int maximum) => value >= minimum && value <= maximum;
     }
 }

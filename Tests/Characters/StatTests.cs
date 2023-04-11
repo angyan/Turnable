@@ -42,7 +42,7 @@ public class StatTests
     [Theory]
     [InlineData(5)]
     [InlineData(110)]
-    internal void A_stat_cannot_be_constructed_with_a_value_outside_its_clamps(int value)
+    internal void A_stat_cannot_be_constructed_with_a_value_outside_its_maximum_and_minimum_value(int value)
     {
         // No arrange
 
@@ -60,7 +60,7 @@ public class StatTests
 
         Stat newStat = sut.Update(5);
 
-        monitoredSut.Should().Raise(nameof(Stat.MinReached)).WithSender(sut)
+        monitoredSut.Should().Raise(nameof(Stat.MinimumReached)).WithSender(sut)
             .WithArgs<StatClampedArgs>(args => args.TriedValue == 5);
     }
 
@@ -72,7 +72,7 @@ public class StatTests
 
         Stat newStat = sut.Update(110);
 
-        monitoredSut.Should().Raise(nameof(Stat.MaxReached)).WithSender(sut)
+        monitoredSut.Should().Raise(nameof(Stat.MaximumReached)).WithSender(sut)
             .WithArgs<StatClampedArgs>(args => args.TriedValue == 110);
     }
 
@@ -89,15 +89,26 @@ public class StatTests
     }
 
     [Fact]
-    internal void An_event_is_not_raised_when_the_value_is_not_clamped()
+    internal void A_minimum_or_maximum_reached_event_is_not_raised_when_the_value_is_not_clamped()
     {
         Stat sut = new(10, 10, 100);
         using var monitoredSut = sut.Monitor();
 
         Stat newStat = sut.Update(50);
 
-        monitoredSut.Should().NotRaise(nameof(Stat.MinReached));
-        monitoredSut.Should().NotRaise(nameof(Stat.MaxReached));
+        monitoredSut.Should().NotRaise(nameof(Stat.MinimumReached));
+        monitoredSut.Should().NotRaise(nameof(Stat.MaximumReached));
+    }
+
+    [Fact]
+    internal void An_event_is_not_raised_when_the_stat_is_updated_to_the_same_current_value()
+    {
+        Stat sut = new(20, 10, 100);
+        using var monitoredSut = sut.Monitor();
+
+        Stat newStat = sut.Update(20);
+
+        monitoredSut.Should().NotRaise(nameof(Stat.ValueUpdated));
     }
 
     [Fact]
@@ -109,7 +120,7 @@ public class StatTests
             subscriber1CallCount++;
         }
         Stat sut = new(10, 10, 100);
-        sut.MinReached += Subscriber;
+        sut.MinimumReached += Subscriber;
 
         Stat newStat = sut.Update(0);
         Stat _ = newStat.Update(0);

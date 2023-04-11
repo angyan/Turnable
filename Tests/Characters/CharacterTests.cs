@@ -21,7 +21,7 @@ public class CharacterTests
     {
         Stat stat = new(50, 10, 100);
         Ability abillity = new("HP", "Hit Points", stat);
-        Character sut = new("Test", ImmutableList<Ability>.Empty.Add(abillity), new Location(0, 0), ImmutableList<Skill>.Empty);
+        Character sut = new("Test", ImmutableList<Ability>.Empty.Add(abillity), ImmutableList<Skill>.Empty);
 
         Ability foundAbility = sut.FindAbility("HP");
 
