@@ -1,4 +1,7 @@
-﻿namespace Turnable.Tiled;
+﻿using System.Text.Json;
+using Turnable.TiledMap;
+
+namespace Turnable.Tiled;
 
 public record TilesetJsonString
 {
@@ -14,4 +17,9 @@ public record TilesetJsonString
     public static implicit operator string(TilesetJsonString tilesetJsonString) => tilesetJsonString.Value;
 
     private static bool IsValid(string value) => value != null && value != "null";
+
+    // NOTE: TilesetJsonString can never have the value "null" which is the only JSON string that returns null when deserialized
+    public Tileset Deserialize() =>
+        JsonSerializer.Deserialize<Tileset>(this.Value,
+            new JsonSerializerOptions() { PropertyNameCaseInsensitive = true })!;
 }

@@ -16,18 +16,4 @@ namespace Tests.Characters;
 
 public class CharacterTests
 {
-    [Fact]
-    internal void A_character_can_find_an_ability_by_name()
-    {
-        Stat stat = new(50, 10, 100);
-        Ability abillity = new("HP", "Hit Points", stat);
-        Character sut = new("Test", ImmutableList<Ability>.Empty.Add(abillity), ImmutableList<Skill>.Empty);
-
-        Ability foundAbility = sut.FindAbility("HP");
-
-        foundAbility.Should().NotBeNull();
-        foundAbility.Name.Should().Be("HP");
-        foundAbility.Description.Should().Be("Hit Points");
-        foundAbility.Stat.Value.Should().Be(50);
-    }
 }

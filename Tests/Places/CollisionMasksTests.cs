@@ -10,7 +10,7 @@ using Turnable.TiledMap;
 
 namespace Tests.Places;
 
-public class StatTests
+public class CollisionMasksTests
 {
     [Theory]
     [InlineData(0, 1)]

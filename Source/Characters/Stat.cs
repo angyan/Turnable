@@ -24,11 +24,30 @@ namespace Turnable.Characters
         public event Action<object, StatClampedArgs>? MinimumReached;
         public event Action<object, StatClampedArgs>? MaximumReached;
         public event Action<object, StatUpdatedArgs>? ValueUpdated;
-
-        internal void RaiseMinimumReached(int triedValue) => MinimumReached?.Invoke(this, new StatClampedArgs(triedValue));
-        internal void RaiseMaximumReached(int triedValue) => MaximumReached?.Invoke(this, new StatClampedArgs(triedValue));
-        internal void RaiseValueUpdated(int newValue) => ValueUpdated?.Invoke(this, new StatUpdatedArgs(newValue));
         
         private static bool IsValid(int value, int minimum, int maximum) => value >= minimum && value <= maximum;
+
+        internal Stat Update(int newValue)
+        {
+            if (newValue <= Minimum)
+            {
+                MinimumReached?.Invoke(this, new StatClampedArgs(newValue));
+                return this with { Value = Minimum };
+            }
+            else if (newValue >= Maximum)
+            {
+                MaximumReached?.Invoke(this, new StatClampedArgs(newValue));
+                return this with { Value = Maximum };
+            }
+            else if (newValue != Value)
+            {
+                ValueUpdated?.Invoke(this, new StatUpdatedArgs(newValue));
+                return this with { Value = newValue };
+            }
+            else
+            {
+                return this;
+            }
+        }
     }
 }

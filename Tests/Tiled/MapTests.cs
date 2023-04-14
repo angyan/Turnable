@@ -7,89 +7,19 @@ using Turnable.Places;
 using Turnable.Tiled;
 using Turnable.TiledMap;
 
-namespace Tests.Places;
+namespace Tests.Tiled;
 
-public class LevelTests
+public class MapTests
 {
     [Fact]
-    internal void Calculating_the_bounds_of_a_map()
+    internal void The_bounds_of_a_map_is_based_on_its_location_width_and_height()
     {
         Map sut = new(-1, 16, false, Array.Empty<Layer>(), 1, 1, "orthogonal", "right-down", "1.9.2", 32, Array.Empty<Tileset>(), 32, "map",
             "1.9", 20);
 
-        Bounds bounds = sut.GetBounds();
+        Bounds bounds = sut.Bounds();
 
         bounds.Should().Be(new Bounds(new(0, 0), new(20, 16)));
-    }
-
-    [Fact]
-    internal void Calculating_the_bounds_of_a_layer()
-    {
-        Layer sut = new(new int[] {0, 0, 0, 0}, 2, 1, "Layer", 1, "layer", true, 2, 0, 0);
-
-        Bounds bounds = sut.GetBounds();
-
-        bounds.Should().Be(new Bounds(new(0, 0), new(2, 2)));
-    }
-
-    [Fact]
-    internal void Getting_the_global_tile_id_at_a_particular_location()
-    {
-        MapFilePath mapFilePath = new("../../../Fixtures/orthogonal_csv_right_down_map_dimensions_16x16_tile_dimensions_32x32_not_empty.tmj");
-        MapJsonString mapJsonString = new(File.ReadAllText(mapFilePath));
-        Map map = mapJsonString.Deserialize();
-
-        int tileAt00 = map.Layers[1].GetTileGid(new Location(0, 0));
-        int tileAt10 = map.Layers[1].GetTileGid(new Location(1, 0));
-        int tileAt01 = map.Layers[1].GetTileGid(new Location(0, 1));
-
-        tileAt00.Should().Be(948);
-        tileAt10.Should().Be(949);
-        tileAt01.Should().Be(997);
-    }
-
-    [Theory]
-    [InlineData(0, 0, 2, 0)]
-    [InlineData(1, 1, 2, 3)]
-    [InlineData(1, 2, 4, 9)]
-    internal void Getting_the_index_in_a_two_dimensional_data_array_that_corresponds_to_a_location(int x, int y, int width, int expectedIndex)
-    {
-        Location location = new(x, y);
-        
-        int index = Level.GetDataIndex(location, width);
-
-        index.Should().Be(expectedIndex);
-    }
-
-    [Theory]
-    [InlineData(1, 0, 0)]
-    [InlineData(2, 1, 0)]
-    [InlineData(50, 0, 1)]
-    [InlineData(51, 1, 1)]
-    internal void Getting_the_atlas_location_for_a_global_tile_id_in_a_tileset(int globalTileId, int atlasX, int atlasY)
-    {
-        MapFilePath mapFilePath = new("../../../Fixtures/orthogonal_csv_right_down_map_dimensions_16x16_tile_dimensions_32x32_not_empty.tmj");
-        MapJsonString mapJsonString = new(File.ReadAllText(mapFilePath));
-        Map map = mapJsonString.Deserialize();
-        TilesetFilePath tilesetFilePath = new("../../../Fixtures/tileset.tsj");
-        TilesetJsonString tilesetJsonString = new(File.ReadAllText(tilesetFilePath));
-        Tileset sut = map.Tilesets[0].DeserializeAndMerge(tilesetJsonString);
-
-        Location atlasLocation = sut.GetAtlasLocation(globalTileId);
-
-        atlasLocation.Should().Be(new Location(atlasX, atlasY));
-    }
-
-    [Fact]
-    internal void All_non_zero_global_tile_ids_are_obstacles_in_a_layer()
-    {
-        Layer sut = new(new int[] {0, 0, 1, 1}, 2, 1, "Layer", 1, "layer", true, 2, 0, 0);
-
-        ImmutableList<Location> obstacles = sut.GetObstacles();
-
-        obstacles.Count.Should().Be(2); // Any non-zero Global Tile Id is an obstacle
-        obstacles.Should().Contain(new Location(1, 1));
-        obstacles.Should().NotContain(new Location(0, 0));
     }
 
     [Fact]
@@ -103,7 +33,7 @@ public class LevelTests
             "1.9", 20);
         CollisionMasks collisionMasks = new(sut, 0, new[] {1, 2});
 
-        ImmutableList<Location> obstacles = sut.GetObstacles(collisionMasks);
+        ImmutableList<Location> obstacles = sut.Obstacles(collisionMasks);
 
         obstacles.Count.Should().Be(2); // Any non-zero Global Tile Id is an obstacle
         obstacles.Should().Contain(new Location(1, 0));
@@ -120,7 +50,7 @@ public class LevelTests
         Map sut = mapJsonString.Deserialize();
         CollisionMasks collisionMasks = new CollisionMasks(new[] { 1 });
 
-        Graph graph = sut.GetGraph(0, collisionMasks, allowDiagonal: true);
+        Graph graph = sut.Graph(0, collisionMasks, allowDiagonal: true);
 
         graph.Count.Should().Be(256); // Each location in the layer is a possible node (even if it's not walkable)
         // Based on how this map is set up, each corner of the lowermost layer should have just 1 walkable neighbor
@@ -143,7 +73,7 @@ public class LevelTests
         CollisionMasks collisionMasks = new CollisionMasks(new[] { 1 });
         List<Location> additionalObstacles = new List<Location>() { new Location(2, 5), new Location(4, 5) };
 
-        Graph graph = sut.GetGraph(0, collisionMasks, allowDiagonal: true, additionalObstacles);
+        Graph graph = sut.Graph(0, collisionMasks, allowDiagonal: true, additionalObstacles);
         
         graph.Count.Should().Be(256);
         graph[new Location(0, 0)].Count.Should().Be(1);
@@ -156,7 +86,6 @@ public class LevelTests
         graph[new Location(3, 4)].Count.Should().Be(4);
     }
 
-
     [Fact]
     internal void Getting_the_graph_for_a_layer_excluding_non_diagonal_neighbors()
     {
@@ -165,7 +94,7 @@ public class LevelTests
         Map sut = mapJsonString.Deserialize();
         CollisionMasks collisionMasks = new CollisionMasks(new[] { 1 });
 
-        Graph graph = sut.GetGraph(0, collisionMasks, allowDiagonal: false);
+        Graph graph = sut.Graph(0, collisionMasks, allowDiagonal: false);
 
         graph.Count.Should().Be(256); // Each location in the layer is a possible node (even if it's not walkable)
         // Based on how this map is set up, each corner of the lowermost layer should have just 1 walkable neighbor
@@ -188,7 +117,7 @@ public class LevelTests
         CollisionMasks collisionMasks = new CollisionMasks(new[] { 1 });
         List<Location> additionalObstacles = new List<Location>() { new Location(4, 4) };
 
-        Graph graph = sut.GetGraph(0, collisionMasks, allowDiagonal: false, additionalObstacles);
+        Graph graph = sut.Graph(0, collisionMasks, allowDiagonal: false, additionalObstacles);
         
         graph.Count.Should().Be(256);
         graph[new Location(0, 0)].Count.Should().Be(0);

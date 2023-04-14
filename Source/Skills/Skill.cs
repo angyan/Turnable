@@ -6,4 +6,4 @@ using System.Threading.Tasks;
 
 namespace Turnable.Skills;
 
-internal record Skill(string Name, string Description, int Range);
+internal record Skill(string Description, int Range);

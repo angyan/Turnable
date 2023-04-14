@@ -21,7 +21,7 @@ public class CharacterMovesTests
     internal void An_initial_dictionary_of_character_locations_can_be_used_to_initialize_the_character_moves()
     {
         ImmutableDictionary<Character, ImmutableList<Location>> initialCharacterLocations = ImmutableDictionary<Character, ImmutableList<Location>>.Empty;
-        initialCharacterLocations  = initialCharacterLocations.Add(new("Test", ImmutableList<Ability>.Empty, ImmutableList<Skill>.Empty), ImmutableList<Location>.Empty.Add(new Location(0, 0)));
+        initialCharacterLocations  = initialCharacterLocations.Add(CreateCharacter("Test"), ImmutableList<Location>.Empty.Add(new Location(0, 0)));
 
         CharacterMoves sut = new(initialCharacterLocations);
 
@@ -119,5 +119,5 @@ public class CharacterMovesTests
         character1Moves.Last().Should().Be(new Location(0, 0));
     }
 
-    private Character CreateCharacter(string name) => new(name, Abilities: ImmutableList<Ability>.Empty, ImmutableList<Skill>.Empty);
+    private Character CreateCharacter(string name) => new(name, Abilities: ImmutableDictionary<string, Ability>.Empty, ImmutableDictionary<string, Skill>.Empty);
 }

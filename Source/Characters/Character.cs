@@ -4,4 +4,4 @@ using Turnable.Skills;
 
 namespace Turnable.Characters;
 
-internal record Character(string Name, IImmutableList<Ability> Abilities, ImmutableList<Skill> Skills);
+internal record Character(string Name, IImmutableDictionary<string, Ability> Abilities, IImmutableDictionary<string, Skill> Skills);
