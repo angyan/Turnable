@@ -2,4 +2,4 @@
 
 namespace Turnable.Layouts;
 
-public readonly record struct Size(Measurement Width, Measurement Height);
+public record Size(Measurement Width, Measurement Height);

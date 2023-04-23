@@ -137,7 +137,7 @@ public class GraphTests
         }
     }
 
-    public class PathfindingWithNoDiagnoalNodesAllowedTests
+    public class PathfindingWithNoDiagonalNodesAllowedTests
     {
         [Fact]
         internal void Finding_a_path_between_two_locations_next_to_each_other()

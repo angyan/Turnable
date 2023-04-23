@@ -20,6 +20,6 @@ public record TilesetJsonString
 
     // NOTE: TilesetJsonString can never have the value "null" which is the only JSON string that returns null when deserialized
     public Tileset Deserialize() =>
-        JsonSerializer.Deserialize<Tileset>(this.Value,
+        JsonSerializer.Deserialize<Tileset>(Value,
             new JsonSerializerOptions() { PropertyNameCaseInsensitive = true })!;
 }

@@ -9,21 +9,19 @@ public record Map(int CompressionLevel, int Height, bool Infinite, Layer[] Layer
     string Orientation, string RenderOrder, string TiledVersion, int TileHeight, Tileset[] Tilesets, int TileWidth,
     string Type, string Version, int Width)
 {
-    internal Bounds Bounds() => new(new(0, 0), new(this.Width, this.Height));
+    internal Bounds Bounds() => new(new(0, 0), new(Width, Height));
 
     internal ImmutableList<Location> Obstacles(CollisionMasks collisionMasks) => (
-        collisionMasks.Value.SelectMany(maskLayerIndex => this.Layers[maskLayerIndex].Obstacles())).ToImmutableList();
+        collisionMasks.Value.SelectMany(maskLayerIndex => Layers[maskLayerIndex].Obstacles())).ToImmutableList();
 
-    private Graph ConstructGraph(int layerIndex,
-        Func<Bounds, Location, Func<Location, bool>, ImmutableList<Location>> getNeighborsFunc,
-        Func<Location, bool> includeFunc)
+    private Graph ConstructGraph(int layerIndex, bool allowDiagonal, Func<Location, bool> includeFunc)
     {
-        Layer layer = this.Layers[layerIndex];
+        Layer layer = Layers[layerIndex];
 
         Dictionary<Location, ImmutableList<Location>> dictionary =
             (from location in layer.Bounds().GetLocations()
                 let bounds = layer.Bounds()
-                let walkableNeighbors = getNeighborsFunc(bounds, location, includeFunc)
+                let walkableNeighbors = Layouts.Bounds.GetNeighbors(bounds, location, allowDiagonal, includeFunc)
                 select new KeyValuePair<Location, ImmutableList<Location>>(location,
                     walkableNeighbors.ToImmutableList())).ToDictionary(pair => pair.Key, pair => pair.Value);
 
@@ -33,26 +31,18 @@ public record Map(int CompressionLevel, int Height, bool Infinite, Layer[] Layer
     private Func<Location, bool> IncludeOnlyFreeLocationsFunc(IList<Location> obstacles) =>
         (location) => !obstacles.Contains(location);
 
-    private Graph ConstructGraph(int layerIndex, CollisionMasks collisionMasks,
-        Func<Bounds, Location, Func<Location, bool>, ImmutableList<Location>> getNeighborsFunc) => ConstructGraph(
-        layerIndex, getNeighborsFunc, IncludeOnlyFreeLocationsFunc(this.Obstacles(collisionMasks)));
+    private Graph ConstructGraph(int layerIndex, CollisionMasks collisionMasks
+        , bool allowDiagonal) => ConstructGraph(
+        layerIndex, allowDiagonal, IncludeOnlyFreeLocationsFunc(Obstacles(collisionMasks)));
 
-    private Graph ConstructGraph(int layerIndex, CollisionMasks collisionMasks,
-        Func<Bounds, Location, Func<Location, bool>, ImmutableList<Location>> getNeighborsFunc,
+    private Graph ConstructGraph(int layerIndex, CollisionMasks collisionMasks, bool allowDiagonal,
         IList<Location> additionalObstacles) => ConstructGraph(
-        layerIndex, getNeighborsFunc,
-        IncludeOnlyFreeLocationsFunc(this.Obstacles(collisionMasks).AddRange(additionalObstacles)));
+        layerIndex, allowDiagonal,
+        IncludeOnlyFreeLocationsFunc(Obstacles(collisionMasks).AddRange(additionalObstacles)));
 
     public Graph Graph(int layerIndex,
-        CollisionMasks collisionMasks, bool allowDiagonal) =>
-        (allowDiagonal
-            ? this.ConstructGraph(layerIndex, collisionMasks, Layouts.Bounds.GetContainedNeighbors)
-            : this.ConstructGraph(layerIndex, collisionMasks, Layouts.Bounds.GetContainedNonDiagonalNeighbors));
+        CollisionMasks collisionMasks, bool allowDiagonal) => ConstructGraph(layerIndex, collisionMasks, allowDiagonal);
 
     public Graph Graph(int layerIndex,
-        CollisionMasks collisionMasks, bool allowDiagonal, IList<Location> additionalObstacles) =>
-        (allowDiagonal
-            ? this.ConstructGraph(layerIndex, collisionMasks, Layouts.Bounds.GetContainedNeighbors, additionalObstacles)
-            : this.ConstructGraph(layerIndex, collisionMasks, Layouts.Bounds.GetContainedNonDiagonalNeighbors,
-                additionalObstacles));
+        CollisionMasks collisionMasks, bool allowDiagonal, IList<Location> additionalObstacles) => ConstructGraph(layerIndex, collisionMasks, allowDiagonal, additionalObstacles);
 };

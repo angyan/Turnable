@@ -1,6 +1,6 @@
 ﻿namespace Turnable.Layouts;
 
-public readonly record struct Measurement
+public record Measurement
 {
     public int Value { get; init; }
 

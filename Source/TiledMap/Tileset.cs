@@ -16,16 +16,16 @@ public record Tileset(
 
         return deserializedTileset with
         {
-            FirstGid = this.FirstGid,
-            Source = this.Source
+            FirstGid = FirstGid,
+            Source = Source
         };
     }
 
     public  Location AtlasLocation(int tileGlobalId)
     {
-        int tileId = tileGlobalId - this.FirstGid;
-        int atlasX = tileId % this.Columns;
-        int atlasY = tileId / this.Columns;
+        int tileId = tileGlobalId - FirstGid;
+        int atlasX = tileId % Columns;
+        int atlasY = tileId / Columns;
 
         return new(atlasX, atlasY);
     }

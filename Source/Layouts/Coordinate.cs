@@ -1,6 +1,6 @@
 ﻿namespace Turnable.Layouts;
 
-public readonly record struct Coordinate
+public record Coordinate
 {
     public int Value { get; init; }
 

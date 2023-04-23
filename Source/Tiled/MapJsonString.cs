@@ -19,7 +19,7 @@ public record MapJsonString
     private bool IsValid(string value) => value != null && value != "null";
 
     // NOTE: MapJsonString can never have the value "null" which is the only JSON string that returns null when deserialized
-    public Map Deserialize() => JsonSerializer.Deserialize<Map>(this.Value, new JsonSerializerOptions()
+    public Map Deserialize() => JsonSerializer.Deserialize<Map>(Value, new JsonSerializerOptions()
     {
         PropertyNameCaseInsensitive = true
     })!;

@@ -1,5 +1,6 @@
 using FluentAssertions;
 using System.Collections.Immutable;
+using Turnable.AI.Pathfinding;
 using Turnable.Layouts;
 
 namespace Tests.Layouts;
@@ -60,24 +61,13 @@ public class BoundsTests
     public class GettingNeighborsTests
     {
         [Theory]
-        [MemberData(nameof(AllNeighbors))]
-        internal void Getting_all_possible_neighbors(Location location, ImmutableList<Location> expectedNeighbors)
-        {
-            Bounds sut = new(new Location(3, 4), new Size(10, 5));
-
-            ImmutableList<Location> neighbors = Bounds.GetNeighbors(sut, location);
-
-            neighbors.Should().BeEquivalentTo(expectedNeighbors);
-        }
-
-        [Theory]
         [MemberData(nameof(ContainedNeighbors))]
-        internal void Getting_only_neighbors_contained_within_some_bounds(Location location,
+        internal void Getting_neighbors_contained_within_some_bounds(Location location,
             ImmutableList<Location> expectedNeighbors)
         {
             Bounds sut = new(new Location(3, 4), new Size(10, 5));
 
-            ImmutableList<Location> neighbors = Bounds.GetContainedNeighbors(sut, location);
+            ImmutableList<Location> neighbors = Bounds.GetNeighbors(sut, location, allowDiagonal: true, _ => true);
 
             neighbors.Should().BeEquivalentTo(expectedNeighbors);
         }
@@ -89,62 +79,9 @@ public class BoundsTests
         {
             Bounds sut = new(new Location(3, 4), new Size(10, 5));
 
-            ImmutableList<Location> neighbors = Bounds.GetContainedNonDiagonalNeighbors(sut, location);
+            ImmutableList<Location> neighbors = Bounds.GetNeighbors(sut, location, allowDiagonal: false, _ => true);
 
             neighbors.Should().BeEquivalentTo(expectedNeighbors);
-        }
-
-        [Fact]
-        internal void Getting_a_list_of_all_locations_within_a_bounds()
-        {
-            Bounds sut = new(new Location(3, 4), new Size(2, 3));
-
-            ImmutableList<Location> locations = sut.GetLocations();
-
-            locations.Count.Should().Be(6);
-            locations.Should().Contain(new Location(3, 4));
-            locations.Should().Contain(new Location(4, 4));
-            locations.Should().Contain(new Location(3, 5));
-            locations.Should().Contain(new Location(4, 5));
-            locations.Should().Contain(new Location(3, 6));
-            locations.Should().Contain(new Location(4, 6));
-        }
-
-        private static IEnumerable<object[]> AllNeighbors()
-        {
-            // Neighbors for top left corner
-            yield return new object[]
-            {
-                new Location(3, 4),
-                ImmutableList.Create<Location>
-                (
-                    new(2, 4),
-                    new(2, 3),
-                    new(3, 3),
-                    new(4, 3),
-                    new(4, 4),
-                    new(4, 5),
-                    new(3, 5),
-                    new(2, 5)
-                )
-            };
-
-            // Neighbors for a location away from all edges
-            yield return new object[]
-            {
-                new Location(4, 5),
-                ImmutableList.Create<Location>
-                (
-                    new(3, 4),
-                    new(4, 4),
-                    new(5, 4),
-                    new(5, 5),
-                    new(5, 6),
-                    new(4, 6),
-                    new(3, 6),
-                    new(3, 5)
-                )
-            };
         }
 
         private static IEnumerable<object[]> ContainedNeighbors()
@@ -278,5 +215,167 @@ public class BoundsTests
                 )
             };
         }
+    }
+
+    [Fact]
+    internal void Getting_a_list_of_all_locations_within_a_bounds()
+    {
+        Bounds sut = new(new Location(3, 4), new Size(2, 3));
+
+        ImmutableList<Location> locations = sut.GetLocations();
+
+        locations.Count.Should().Be(6);
+        locations.Should().Contain(new Location(3, 4));
+        locations.Should().Contain(new Location(4, 4));
+        locations.Should().Contain(new Location(3, 5));
+        locations.Should().Contain(new Location(4, 5));
+        locations.Should().Contain(new Location(3, 6));
+        locations.Should().Contain(new Location(4, 6));
+    }
+
+    [Fact]
+    internal void Finding_locations_at_a_distance_of_1_with_no_diagonal_movement_allowed()
+    {
+        Bounds sut = new(new Location(3, 4), new Size(10, 10));
+
+        IEnumerable<Location> locations = sut.GetLocations(new Location(5, 6), 1, allowDiagonal: false);
+
+        locations.Should().NotBeNull();
+        locations.Should().HaveCount(4);
+        locations.Should().Contain(new Location(4, 6));
+        locations.Should().Contain(new Location(6, 6));
+        locations.Should().Contain(new Location(5, 5));
+        locations.Should().Contain(new Location(5, 7));
+    }
+
+    [Fact]
+    internal void Finding_locations_at_a_distance_of_2_with_no_diagonal_movement_allowed()
+    {
+        Bounds sut = new(new Location(3, 4), new Size(10, 10));
+
+        IEnumerable<Location> locations = sut.GetLocations(new Location(5, 6), 2, allowDiagonal: false);
+
+        locations.Should().NotBeNull();
+        locations.Should().HaveCount(8);
+        locations.Should().Contain(new Location(5, 8));
+        locations.Should().Contain(new Location(5, 4));
+        locations.Should().Contain(new Location(7, 6));
+        locations.Should().Contain(new Location(3, 6));
+        locations.Should().Contain(new Location(6, 7));
+        locations.Should().Contain(new Location(4, 7));
+        locations.Should().Contain(new Location(6, 5));
+        locations.Should().Contain(new Location(4, 5));
+    }
+
+    [Fact]
+    internal void
+    Finding_locations_in_a_range_from_1_to_2_with_no_diagonal_movement_allowed_merges_the_locations_at_those_distances()
+    {
+        Bounds sut = new(new Location(3, 4), new Size(10, 10));
+
+        IEnumerable<Location> locations = sut.GetLocations(new Location(5, 6), 1, 2, allowDiagonal: false);
+
+        locations.Should().NotBeNull();
+        locations.Should().HaveCount(12);
+        locations.Should().Contain(new Location(4, 6));
+        locations.Should().Contain(new Location(6, 6));
+        locations.Should().Contain(new Location(5, 5));
+        locations.Should().Contain(new Location(5, 7));
+        locations.Should().Contain(new Location(5, 8));
+        locations.Should().Contain(new Location(5, 4));
+        locations.Should().Contain(new Location(7, 6));
+        locations.Should().Contain(new Location(3, 6));
+        locations.Should().Contain(new Location(6, 7));
+        locations.Should().Contain(new Location(4, 7));
+        locations.Should().Contain(new Location(6, 5));
+        locations.Should().Contain(new Location(4, 5));
+    }
+
+    [Fact]
+    internal void Finding_locations_at_a_distance_of_1_with_diagonal_movement_allowed()
+    {
+        Bounds sut = new(new Location(3, 4), new Size(10, 10));
+
+        IEnumerable<Location> locations = sut.GetLocations(new Location(5, 6), 1, allowDiagonal: true);
+
+        locations.Should().NotBeNull();
+        locations.Should().HaveCount(8);
+        locations.Should().Contain(new Location(5, 7));
+        locations.Should().Contain(new Location(5, 5));
+        locations.Should().Contain(new Location(4, 6));
+        locations.Should().Contain(new Location(6, 6));
+        locations.Should().Contain(new Location(4, 5));
+        locations.Should().Contain(new Location(4, 7));
+        locations.Should().Contain(new Location(6, 5));
+        locations.Should().Contain(new Location(6, 7));
+    }
+
+    [Fact]
+    internal void Finding_locations_at_a_distance_of_2_with_diagonal_movement_allowed()
+    {
+        Bounds sut = new(new Location(3, 4), new Size(10, 10));
+
+        IEnumerable<Location> locations = sut.GetLocations(new Location(5, 6), 2, allowDiagonal: true);
+
+        locations.Should().NotBeNull();
+        locations.Should().HaveCount(16);
+        // All orthogonal locations 2 steps from (5, 6)
+        locations.Should().Contain(new Location(5, 8));
+        locations.Should().Contain(new Location(5, 4));
+        locations.Should().Contain(new Location(3, 6));
+        locations.Should().Contain(new Location(7, 6));
+        // All diagonal locations 2 steps from (5, 6)
+        locations.Should().Contain(new Location(3, 4));
+        locations.Should().Contain(new Location(7, 4));
+        locations.Should().Contain(new Location(7, 8));
+        locations.Should().Contain(new Location(3, 8));
+        // All other locations 2 steps from (5, 6)
+        locations.Should().Contain(new Location(3, 5));
+        locations.Should().Contain(new Location(3, 7));
+        locations.Should().Contain(new Location(7, 5));
+        locations.Should().Contain(new Location(7, 7));
+        locations.Should().Contain(new Location(4, 4));
+        locations.Should().Contain(new Location(4, 8));
+        locations.Should().Contain(new Location(6, 4));
+        locations.Should().Contain(new Location(6, 8));
+    }
+
+    [Fact]
+    internal void
+        Finding_locations_in_a_range_from_1_to_2_with_diagonal_movement_allowed_merges_the_locations_at_those_distances()
+    {
+        Bounds sut = new(new Location(3, 4), new Size(10, 10));
+
+        IEnumerable<Location> locations = sut.GetLocations(new Location(5, 6), 1, 2, allowDiagonal: true);
+
+        locations.Should().NotBeNull();
+        locations.Should().HaveCount(24);
+        locations.Should().Contain(new Location(5, 7));
+        locations.Should().Contain(new Location(5, 5));
+        locations.Should().Contain(new Location(4, 6));
+        locations.Should().Contain(new Location(6, 6));
+        locations.Should().Contain(new Location(4, 5));
+        locations.Should().Contain(new Location(4, 7));
+        locations.Should().Contain(new Location(6, 5));
+        locations.Should().Contain(new Location(6, 7));
+        // All orthogonal locations 2 steps from (5, 6)
+        locations.Should().Contain(new Location(5, 8));
+        locations.Should().Contain(new Location(5, 4));
+        locations.Should().Contain(new Location(3, 6));
+        locations.Should().Contain(new Location(7, 6));
+        // All diagonal locations 2 steps from (5, 6)
+        locations.Should().Contain(new Location(3, 4));
+        locations.Should().Contain(new Location(7, 4));
+        locations.Should().Contain(new Location(7, 8));
+        locations.Should().Contain(new Location(3, 8));
+        // All other locations 2 steps from (5, 6)
+        locations.Should().Contain(new Location(3, 5));
+        locations.Should().Contain(new Location(3, 7));
+        locations.Should().Contain(new Location(7, 5));
+        locations.Should().Contain(new Location(7, 7));
+        locations.Should().Contain(new Location(4, 4));
+        locations.Should().Contain(new Location(4, 8));
+        locations.Should().Contain(new Location(6, 4));
+        locations.Should().Contain(new Location(6, 8));
     }
 }

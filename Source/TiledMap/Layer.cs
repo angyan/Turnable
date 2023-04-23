@@ -7,13 +7,13 @@ public record Layer(int[] Data, int Height, int Id, string Name, int Opacity, st
     int Width,
     int X, int Y)
 {
-    internal Bounds Bounds() => new(new(0, 0), new(this.Width, this.Height));
+    internal Bounds Bounds() => new(new(0, 0), new(Width, Height));
 
-    public int TileGid(Location location) => this.Data[location.X + location.Y * this.Width];
+    public int TileGid(Location location) => Data[location.X + location.Y * Width];
 
     internal ImmutableList<Location> Obstacles() =>
-        (from location in this.Bounds().GetLocations()
-            where this.TileGid(location) != 0
+        (from location in Bounds().GetLocations()
+            where TileGid(location) != 0
             select location)
         .ToImmutableList();
 };
