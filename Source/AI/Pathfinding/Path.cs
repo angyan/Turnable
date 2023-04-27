@@ -12,7 +12,7 @@ public record Path(IImmutableList<Location> Value)
         return Value.SequenceEqual(other.Value);
     }
 
-    internal int Count => Value.Count;
+    internal int NodeCount => Value.Count;
 
     internal Location this[int index] => Value[index];
     

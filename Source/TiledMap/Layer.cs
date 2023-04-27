@@ -11,7 +11,7 @@ public record Layer(int[] Data, int Height, int Id, string Name, int Opacity, st
 
     public int TileGid(Location location) => Data[location.X + location.Y * Width];
 
-    internal ImmutableList<Location> Obstacles() =>
+    internal ImmutableList<Location> GetObstacles() =>
         (from location in Bounds().GetLocations()
             where TileGid(location) != 0
             select location)

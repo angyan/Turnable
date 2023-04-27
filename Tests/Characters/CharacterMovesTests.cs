@@ -75,7 +75,7 @@ public class CharacterMovesTests
         CharacterMoves newCharacterMoves = sut.Move(character1, new Location(1, 1));
         newCharacterMoves = newCharacterMoves.Move(character2, new Location(1, 2));
         newCharacterMoves = newCharacterMoves.Move(character1, new Location(2, 2));
-        ImmutableDictionary<Character, Location> currentLocations = newCharacterMoves.GetCurrentCharacterLocations();
+        ImmutableDictionary<Character, Location> currentLocations = newCharacterMoves.GetLocations();
 
         currentLocations.Count.Should().Be(2);
         currentLocations[character1].Should().Be(new Location(2, 2));
@@ -95,7 +95,7 @@ public class CharacterMovesTests
         CharacterMoves newCharacterMoves = sut.Move(character1, new Location(1, 1));
         newCharacterMoves = newCharacterMoves.Move(character2, new Location(1, 2));
         newCharacterMoves = newCharacterMoves.Move(character1, new Location(2, 2));
-        ImmutableDictionary<Character, Location> currentLocations = newCharacterMoves.GetCurrentCharacterLocations(character2);
+        ImmutableDictionary<Character, Location> currentLocations = newCharacterMoves.GetLocations(character2);
 
         currentLocations.Count.Should().Be(1);
         currentLocations[character1].Should().Be(new Location(2, 2));
@@ -111,7 +111,7 @@ public class CharacterMovesTests
 
         CharacterMoves newCharacterMoves = sut.Move(character1, new Location(1, 1));
         newCharacterMoves = newCharacterMoves.Move(character1, new Location(2, 2));
-        ImmutableList<Location> character1Moves = newCharacterMoves.GetCharacterMoves(character1);
+        ImmutableList<Location> character1Moves = newCharacterMoves.GetMoves(character1);
 
         character1Moves.Count.Should().Be(3);
         character1Moves.First().Should().Be(new Location(2, 2));

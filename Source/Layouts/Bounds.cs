@@ -28,7 +28,7 @@ internal record Bounds
         int[] xOffsets = { -1, 0, 1 };
         int[] yOffsets = { -1, 0, 1 };
 
-        Func<Location, bool> includeNeighbotLocationFunc = allowDiagonal
+        Func<Location, bool> includeNeighborLocationFunc = allowDiagonal
             // If we allow diagonal movement, we need to include all locations that are within bounds and pass the predicate function
             ? (Location locationArgument) =>
                 bounds.Contains(locationArgument) && includeLocationPredicateFunc(locationArgument)
@@ -42,7 +42,7 @@ internal record Bounds
                 from yOffset in yOffsets // Every combination of xOffsets and yOffsets
                 where !(yOffset == 0 && xOffset == 0) // xOffset = 0 and yOffset = 0 is the location itself
                 let neighborLocation = new Location(location.X + xOffset, location.Y + yOffset)
-                where includeNeighbotLocationFunc(neighborLocation)
+                where includeNeighborLocationFunc(neighborLocation)
                 select neighborLocation)
             .Distinct().ToImmutableList();
     }
@@ -76,4 +76,6 @@ internal record Bounds
 
         return GetLocations(IncludeLocationPredicateFunc);
     }
+
+    internal int GetLocationCount(Location from, int distance, bool allowDiagonal) => GetLocations(from, distance, allowDiagonal).Count;
 }

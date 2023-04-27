@@ -49,7 +49,7 @@ public class GraphTests
             Path path = sut.FindPath(new Location(1, 1), new Location(2, 1));
 
             path.Should().NotBeNull();
-            path.Count.Should().Be(2);
+            path.NodeCount.Should().Be(2);
             path[0].Should().Be(new Location(1, 1));
             path[1].Should().Be(new Location(2, 1));
         }
@@ -62,7 +62,7 @@ public class GraphTests
             Path path = sut.FindPath(new Location(1, 1), new Location(4, 1));
 
             path.Should().NotBeNull();
-            path.Count.Should().Be(4);
+            path.NodeCount.Should().Be(4);
             path[0].Should().Be(new Location(1, 1));
             path[1].Should().Be(new Location(2, 1));
             path[2].Should().Be(new Location(3, 1));
@@ -77,7 +77,7 @@ public class GraphTests
             Path path = sut.FindPath(new Location(4, 1), new Location(4, 4));
 
             path.Should().NotBeNull();
-            path.Count.Should().Be(4);
+            path.NodeCount.Should().Be(4);
             path[0].Should().Be(new Location(4, 1));
             path[1].Should().Be(new Location(4, 2));
             path[2].Should().Be(new Location(4, 3));
@@ -93,7 +93,7 @@ public class GraphTests
             Path path = sut.FindPath(new Location(10, 13), new Location(14, 13));
 
             path.Should().NotBeNull();
-            path.Count.Should().Be(5);
+            path.NodeCount.Should().Be(5);
             path[0].Should().Be(new Location(10, 13));
             path[1].Should().Be(new Location(11, 12));
             path[2].Should().Be(new Location(12, 11));
@@ -109,7 +109,7 @@ public class GraphTests
             Path path = sut.FindPath(new Location(2, 3), new Location(4, 3));
 
             path.Should().NotBeNull();
-            path.Count.Should().Be(0);
+            path.NodeCount.Should().Be(0);
         }
 
         [Fact]
@@ -120,20 +120,7 @@ public class GraphTests
             Path path = sut.FindPath(new Location(1, 3), new Location(3, 3));
 
             path.Should().NotBeNull();
-            path.Count.Should().Be(0);
-        }
-
-        // Factory method to create a graph with diagonal nodes allowed
-        private Graph CreateGraphWithDiagonalNodesAllowed()
-        {
-            MapFilePath mapFilePath =
-                new(
-                    "../../../Fixtures/orthogonal_csv_right_down_map_dimensions_16x16_tile_dimensions_32x32_not_empty.tmj");
-            MapJsonString mapJsonString = new(File.ReadAllText(mapFilePath));
-            Map map = mapJsonString.Deserialize();
-            CollisionMasks collisionMasks = new CollisionMasks(new[] { 1 });
-
-            return map.Graph(0, collisionMasks, allowDiagonal: true);
+            path.NodeCount.Should().Be(0);
         }
     }
 
@@ -147,7 +134,7 @@ public class GraphTests
             Path path = sut.FindPath(new Location(1, 1), new Location(2, 1));
 
             path.Should().NotBeNull();
-            path.Count.Should().Be(2);
+            path.NodeCount.Should().Be(2);
             path[0].Should().Be(new Location(1, 1));
             path[1].Should().Be(new Location(2, 1));
         }
@@ -160,7 +147,7 @@ public class GraphTests
             Path path = sut.FindPath(new Location(1, 1), new Location(4, 1));
 
             path.Should().NotBeNull();
-            path.Count.Should().Be(4);
+            path.NodeCount.Should().Be(4);
             path[0].Should().Be(new Location(1, 1));
             path[1].Should().Be(new Location(2, 1));
             path[2].Should().Be(new Location(3, 1));
@@ -175,7 +162,7 @@ public class GraphTests
             Path path = sut.FindPath(new Location(4, 1), new Location(4, 4));
 
             path.Should().NotBeNull();
-            path.Count.Should().Be(4);
+            path.NodeCount.Should().Be(4);
             path[0].Should().Be(new Location(4, 1));
             path[1].Should().Be(new Location(4, 2));
             path[2].Should().Be(new Location(4, 3));
@@ -190,7 +177,7 @@ public class GraphTests
             Path path = sut.FindPath(new Location(10, 13), new Location(14, 13));
 
             path.Should().NotBeNull();
-            path.Count.Should().Be(9);
+            path.NodeCount.Should().Be(9);
             path[0].Should().Be(new Location(10, 13));
             path[1].Should().Be(new Location(10, 12));
             path[2].Should().Be(new Location(11, 12));
@@ -210,7 +197,7 @@ public class GraphTests
             Path path = sut.FindPath(new Location(2, 3), new Location(4, 3));
 
             path.Should().NotBeNull();
-            path.Count.Should().Be(0);
+            path.NodeCount.Should().Be(0);
         }
 
         [Fact]
@@ -221,7 +208,7 @@ public class GraphTests
             Path path = sut.FindPath(new Location(1, 3), new Location(3, 3));
 
             path.Should().NotBeNull();
-            path.Count.Should().Be(0);
+            path.NodeCount.Should().Be(0);
         }
 
         // Factory method to create the pathfinder, and cache it for future calls
@@ -236,4 +223,38 @@ public class GraphTests
             return map.Graph(0, collisionMasks, allowDiagonal: false);
         }
     }
+
+    public class PathfindingToLocationsWithinACertainDistanceOrRange
+    {
+        [Fact]
+        public void Finding_a_path_between_two_locations_within_a_certain_distance()
+        {
+            Graph sut = CreateGraphWithDiagonalNodesAllowed();
+
+            //ImmutableList<Path> paths = sut.FindPaths(new Location(1, 1), new Location(4, 4), 1);
+
+            //paths.Should().NotBeNull();
+            //paths.Count.Should().Be(8);
+            //path.Should().NotBeNull();
+            //path.Count.Should().Be(5);
+            //path[0].Should().Be(new Location(1, 1));
+            //path[1].Should().Be(new Location(2, 2));
+            //path[2].Should().Be(new Location(3, 3));
+            //path[3].Should().Be(new Location(4, 4));
+        }
+    }
+
+    // Factory method to create a graph with diagonal nodes allowed
+    private static Graph CreateGraphWithDiagonalNodesAllowed()
+    {
+        MapFilePath mapFilePath =
+            new(
+                "../../../Fixtures/orthogonal_csv_right_down_map_dimensions_16x16_tile_dimensions_32x32_not_empty.tmj");
+        MapJsonString mapJsonString = new(File.ReadAllText(mapFilePath));
+        Map map = mapJsonString.Deserialize();
+        CollisionMasks collisionMasks = new CollisionMasks(new[] { 1 });
+
+        return map.Graph(0, collisionMasks, allowDiagonal: true);
+    }
+
 }

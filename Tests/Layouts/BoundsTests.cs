@@ -217,165 +217,194 @@ public class BoundsTests
         }
     }
 
-    [Fact]
-    internal void Getting_a_list_of_all_locations_within_a_bounds()
+    public class GettingLocationsTests
     {
-        Bounds sut = new(new Location(3, 4), new Size(2, 3));
+        [Theory]
+        [InlineData(1, 8)]
+        [InlineData(2, 16)]
+        [InlineData(3, 11)]
+        internal void Getting_the_count_of_locations_at_a_distance_with_diagonal_nodes_allowed(int distance, int expectedLocationCount)
+        {
+            Bounds sut = new(new Location(3, 4), new Size(10, 10));
 
-        ImmutableList<Location> locations = sut.GetLocations();
+            int locationCount = sut.GetLocationCount(new Location(5, 6), distance, allowDiagonal: true);
 
-        locations.Count.Should().Be(6);
-        locations.Should().Contain(new Location(3, 4));
-        locations.Should().Contain(new Location(4, 4));
-        locations.Should().Contain(new Location(3, 5));
-        locations.Should().Contain(new Location(4, 5));
-        locations.Should().Contain(new Location(3, 6));
-        locations.Should().Contain(new Location(4, 6));
-    }
+            locationCount.Should().Be(expectedLocationCount);
+        }
 
-    [Fact]
-    internal void Finding_locations_at_a_distance_of_1_with_no_diagonal_movement_allowed()
-    {
-        Bounds sut = new(new Location(3, 4), new Size(10, 10));
+        [Theory]
+        [InlineData(1, 4)]
+        [InlineData(2, 8)]
+        [InlineData(3, 10)]
+        internal void Getting_the_count_of_locations_at_a_distance_with_no_diagonal_nodes_allowed(int distance, int expectedLocationCount)
+        {
+            Bounds sut = new(new Location(3, 4), new Size(10, 10));
 
-        IEnumerable<Location> locations = sut.GetLocations(new Location(5, 6), 1, allowDiagonal: false);
+            int locationCount = sut.GetLocationCount(new Location(5, 6), distance, allowDiagonal: false);
 
-        locations.Should().NotBeNull();
-        locations.Should().HaveCount(4);
-        locations.Should().Contain(new Location(4, 6));
-        locations.Should().Contain(new Location(6, 6));
-        locations.Should().Contain(new Location(5, 5));
-        locations.Should().Contain(new Location(5, 7));
-    }
+            locationCount.Should().Be(expectedLocationCount);
+        }
 
-    [Fact]
-    internal void Finding_locations_at_a_distance_of_2_with_no_diagonal_movement_allowed()
-    {
-        Bounds sut = new(new Location(3, 4), new Size(10, 10));
+        [Fact]
+        internal void Getting_a_list_of_all_locations_within_a_bounds()
+        {
+            Bounds sut = new(new Location(3, 4), new Size(2, 3));
 
-        IEnumerable<Location> locations = sut.GetLocations(new Location(5, 6), 2, allowDiagonal: false);
+            ImmutableList<Location> locations = sut.GetLocations();
 
-        locations.Should().NotBeNull();
-        locations.Should().HaveCount(8);
-        locations.Should().Contain(new Location(5, 8));
-        locations.Should().Contain(new Location(5, 4));
-        locations.Should().Contain(new Location(7, 6));
-        locations.Should().Contain(new Location(3, 6));
-        locations.Should().Contain(new Location(6, 7));
-        locations.Should().Contain(new Location(4, 7));
-        locations.Should().Contain(new Location(6, 5));
-        locations.Should().Contain(new Location(4, 5));
-    }
+            locations.Count.Should().Be(6);
+            locations.Should().Contain(new Location(3, 4));
+            locations.Should().Contain(new Location(4, 4));
+            locations.Should().Contain(new Location(3, 5));
+            locations.Should().Contain(new Location(4, 5));
+            locations.Should().Contain(new Location(3, 6));
+            locations.Should().Contain(new Location(4, 6));
+        }
 
-    [Fact]
-    internal void
-    Finding_locations_in_a_range_from_1_to_2_with_no_diagonal_movement_allowed_merges_the_locations_at_those_distances()
-    {
-        Bounds sut = new(new Location(3, 4), new Size(10, 10));
+        [Fact]
+        internal void Finding_locations_at_a_distance_of_1_with_no_diagonal_movement_allowed()
+        {
+            Bounds sut = new(new Location(3, 4), new Size(10, 10));
 
-        IEnumerable<Location> locations = sut.GetLocations(new Location(5, 6), 1, 2, allowDiagonal: false);
+            IEnumerable<Location> locations = sut.GetLocations(new Location(5, 6), 1, allowDiagonal: false);
 
-        locations.Should().NotBeNull();
-        locations.Should().HaveCount(12);
-        locations.Should().Contain(new Location(4, 6));
-        locations.Should().Contain(new Location(6, 6));
-        locations.Should().Contain(new Location(5, 5));
-        locations.Should().Contain(new Location(5, 7));
-        locations.Should().Contain(new Location(5, 8));
-        locations.Should().Contain(new Location(5, 4));
-        locations.Should().Contain(new Location(7, 6));
-        locations.Should().Contain(new Location(3, 6));
-        locations.Should().Contain(new Location(6, 7));
-        locations.Should().Contain(new Location(4, 7));
-        locations.Should().Contain(new Location(6, 5));
-        locations.Should().Contain(new Location(4, 5));
-    }
+            locations.Should().NotBeNull();
+            locations.Should().HaveCount(4);
+            locations.Should().Contain(new Location(4, 6));
+            locations.Should().Contain(new Location(6, 6));
+            locations.Should().Contain(new Location(5, 5));
+            locations.Should().Contain(new Location(5, 7));
+        }
 
-    [Fact]
-    internal void Finding_locations_at_a_distance_of_1_with_diagonal_movement_allowed()
-    {
-        Bounds sut = new(new Location(3, 4), new Size(10, 10));
+        [Fact]
+        internal void Finding_locations_at_a_distance_of_2_with_no_diagonal_movement_allowed()
+        {
+            Bounds sut = new(new Location(3, 4), new Size(10, 10));
 
-        IEnumerable<Location> locations = sut.GetLocations(new Location(5, 6), 1, allowDiagonal: true);
+            IEnumerable<Location> locations = sut.GetLocations(new Location(5, 6), 2, allowDiagonal: false);
 
-        locations.Should().NotBeNull();
-        locations.Should().HaveCount(8);
-        locations.Should().Contain(new Location(5, 7));
-        locations.Should().Contain(new Location(5, 5));
-        locations.Should().Contain(new Location(4, 6));
-        locations.Should().Contain(new Location(6, 6));
-        locations.Should().Contain(new Location(4, 5));
-        locations.Should().Contain(new Location(4, 7));
-        locations.Should().Contain(new Location(6, 5));
-        locations.Should().Contain(new Location(6, 7));
-    }
+            locations.Should().NotBeNull();
+            locations.Should().HaveCount(8);
+            locations.Should().Contain(new Location(5, 8));
+            locations.Should().Contain(new Location(5, 4));
+            locations.Should().Contain(new Location(7, 6));
+            locations.Should().Contain(new Location(3, 6));
+            locations.Should().Contain(new Location(6, 7));
+            locations.Should().Contain(new Location(4, 7));
+            locations.Should().Contain(new Location(6, 5));
+            locations.Should().Contain(new Location(4, 5));
+        }
 
-    [Fact]
-    internal void Finding_locations_at_a_distance_of_2_with_diagonal_movement_allowed()
-    {
-        Bounds sut = new(new Location(3, 4), new Size(10, 10));
+        [Fact]
+        internal void
+            Finding_locations_in_a_range_from_1_to_2_with_no_diagonal_movement_allowed_merges_the_locations_at_those_distances()
+        {
+            Bounds sut = new(new Location(3, 4), new Size(10, 10));
 
-        IEnumerable<Location> locations = sut.GetLocations(new Location(5, 6), 2, allowDiagonal: true);
+            IEnumerable<Location> locations = sut.GetLocations(new Location(5, 6), 1, 2, allowDiagonal: false);
 
-        locations.Should().NotBeNull();
-        locations.Should().HaveCount(16);
-        // All orthogonal locations 2 steps from (5, 6)
-        locations.Should().Contain(new Location(5, 8));
-        locations.Should().Contain(new Location(5, 4));
-        locations.Should().Contain(new Location(3, 6));
-        locations.Should().Contain(new Location(7, 6));
-        // All diagonal locations 2 steps from (5, 6)
-        locations.Should().Contain(new Location(3, 4));
-        locations.Should().Contain(new Location(7, 4));
-        locations.Should().Contain(new Location(7, 8));
-        locations.Should().Contain(new Location(3, 8));
-        // All other locations 2 steps from (5, 6)
-        locations.Should().Contain(new Location(3, 5));
-        locations.Should().Contain(new Location(3, 7));
-        locations.Should().Contain(new Location(7, 5));
-        locations.Should().Contain(new Location(7, 7));
-        locations.Should().Contain(new Location(4, 4));
-        locations.Should().Contain(new Location(4, 8));
-        locations.Should().Contain(new Location(6, 4));
-        locations.Should().Contain(new Location(6, 8));
-    }
+            locations.Should().NotBeNull();
+            locations.Should().HaveCount(12);
+            locations.Should().Contain(new Location(4, 6));
+            locations.Should().Contain(new Location(6, 6));
+            locations.Should().Contain(new Location(5, 5));
+            locations.Should().Contain(new Location(5, 7));
+            locations.Should().Contain(new Location(5, 8));
+            locations.Should().Contain(new Location(5, 4));
+            locations.Should().Contain(new Location(7, 6));
+            locations.Should().Contain(new Location(3, 6));
+            locations.Should().Contain(new Location(6, 7));
+            locations.Should().Contain(new Location(4, 7));
+            locations.Should().Contain(new Location(6, 5));
+            locations.Should().Contain(new Location(4, 5));
+        }
 
-    [Fact]
-    internal void
-        Finding_locations_in_a_range_from_1_to_2_with_diagonal_movement_allowed_merges_the_locations_at_those_distances()
-    {
-        Bounds sut = new(new Location(3, 4), new Size(10, 10));
+        [Fact]
+        internal void Finding_locations_at_a_distance_of_1_with_diagonal_movement_allowed()
+        {
+            Bounds sut = new(new Location(3, 4), new Size(10, 10));
 
-        IEnumerable<Location> locations = sut.GetLocations(new Location(5, 6), 1, 2, allowDiagonal: true);
+            IEnumerable<Location> locations = sut.GetLocations(new Location(5, 6), 1, allowDiagonal: true);
 
-        locations.Should().NotBeNull();
-        locations.Should().HaveCount(24);
-        locations.Should().Contain(new Location(5, 7));
-        locations.Should().Contain(new Location(5, 5));
-        locations.Should().Contain(new Location(4, 6));
-        locations.Should().Contain(new Location(6, 6));
-        locations.Should().Contain(new Location(4, 5));
-        locations.Should().Contain(new Location(4, 7));
-        locations.Should().Contain(new Location(6, 5));
-        locations.Should().Contain(new Location(6, 7));
-        // All orthogonal locations 2 steps from (5, 6)
-        locations.Should().Contain(new Location(5, 8));
-        locations.Should().Contain(new Location(5, 4));
-        locations.Should().Contain(new Location(3, 6));
-        locations.Should().Contain(new Location(7, 6));
-        // All diagonal locations 2 steps from (5, 6)
-        locations.Should().Contain(new Location(3, 4));
-        locations.Should().Contain(new Location(7, 4));
-        locations.Should().Contain(new Location(7, 8));
-        locations.Should().Contain(new Location(3, 8));
-        // All other locations 2 steps from (5, 6)
-        locations.Should().Contain(new Location(3, 5));
-        locations.Should().Contain(new Location(3, 7));
-        locations.Should().Contain(new Location(7, 5));
-        locations.Should().Contain(new Location(7, 7));
-        locations.Should().Contain(new Location(4, 4));
-        locations.Should().Contain(new Location(4, 8));
-        locations.Should().Contain(new Location(6, 4));
-        locations.Should().Contain(new Location(6, 8));
+            locations.Should().NotBeNull();
+            locations.Should().HaveCount(8);
+            locations.Should().Contain(new Location(5, 7));
+            locations.Should().Contain(new Location(5, 5));
+            locations.Should().Contain(new Location(4, 6));
+            locations.Should().Contain(new Location(6, 6));
+            locations.Should().Contain(new Location(4, 5));
+            locations.Should().Contain(new Location(4, 7));
+            locations.Should().Contain(new Location(6, 5));
+            locations.Should().Contain(new Location(6, 7));
+        }
+
+        [Fact]
+        internal void Finding_locations_at_a_distance_of_2_with_diagonal_movement_allowed()
+        {
+            Bounds sut = new(new Location(3, 4), new Size(10, 10));
+
+            IEnumerable<Location> locations = sut.GetLocations(new Location(5, 6), 2, allowDiagonal: true);
+
+            locations.Should().NotBeNull();
+            locations.Should().HaveCount(16);
+            // All orthogonal locations 2 steps from (5, 6)
+            locations.Should().Contain(new Location(5, 8));
+            locations.Should().Contain(new Location(5, 4));
+            locations.Should().Contain(new Location(3, 6));
+            locations.Should().Contain(new Location(7, 6));
+            // All diagonal locations 2 steps from (5, 6)
+            locations.Should().Contain(new Location(3, 4));
+            locations.Should().Contain(new Location(7, 4));
+            locations.Should().Contain(new Location(7, 8));
+            locations.Should().Contain(new Location(3, 8));
+            // All other locations 2 steps from (5, 6)
+            locations.Should().Contain(new Location(3, 5));
+            locations.Should().Contain(new Location(3, 7));
+            locations.Should().Contain(new Location(7, 5));
+            locations.Should().Contain(new Location(7, 7));
+            locations.Should().Contain(new Location(4, 4));
+            locations.Should().Contain(new Location(4, 8));
+            locations.Should().Contain(new Location(6, 4));
+            locations.Should().Contain(new Location(6, 8));
+        }
+
+        [Fact]
+        internal void
+            Finding_locations_in_a_range_from_1_to_2_with_diagonal_movement_allowed_merges_the_locations_at_those_distances()
+        {
+            Bounds sut = new(new Location(3, 4), new Size(10, 10));
+
+            IEnumerable<Location> locations = sut.GetLocations(new Location(5, 6), 1, 2, allowDiagonal: true);
+
+            locations.Should().NotBeNull();
+            locations.Should().HaveCount(24);
+            locations.Should().Contain(new Location(5, 7));
+            locations.Should().Contain(new Location(5, 5));
+            locations.Should().Contain(new Location(4, 6));
+            locations.Should().Contain(new Location(6, 6));
+            locations.Should().Contain(new Location(4, 5));
+            locations.Should().Contain(new Location(4, 7));
+            locations.Should().Contain(new Location(6, 5));
+            locations.Should().Contain(new Location(6, 7));
+            // All orthogonal locations 2 steps from (5, 6)
+            locations.Should().Contain(new Location(5, 8));
+            locations.Should().Contain(new Location(5, 4));
+            locations.Should().Contain(new Location(3, 6));
+            locations.Should().Contain(new Location(7, 6));
+            // All diagonal locations 2 steps from (5, 6)
+            locations.Should().Contain(new Location(3, 4));
+            locations.Should().Contain(new Location(7, 4));
+            locations.Should().Contain(new Location(7, 8));
+            locations.Should().Contain(new Location(3, 8));
+            // All other locations 2 steps from (5, 6)
+            locations.Should().Contain(new Location(3, 5));
+            locations.Should().Contain(new Location(3, 7));
+            locations.Should().Contain(new Location(7, 5));
+            locations.Should().Contain(new Location(7, 7));
+            locations.Should().Contain(new Location(4, 4));
+            locations.Should().Contain(new Location(4, 8));
+            locations.Should().Contain(new Location(6, 4));
+            locations.Should().Contain(new Location(6, 8));
+        }
     }
 }

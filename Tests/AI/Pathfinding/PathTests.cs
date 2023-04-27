@@ -38,7 +38,7 @@ public class PathTests
         ImmutableList<Location> nodes = ImmutableList.Create<Location>(new(1, 1), new(1, 2), new(1, 3));
         Path sut = new(nodes);
 
-        int count = sut.Count;
+        int count = sut.NodeCount;
 
         count.Should().Be(3);
     }

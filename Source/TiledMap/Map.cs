@@ -9,10 +9,10 @@ public record Map(int CompressionLevel, int Height, bool Infinite, Layer[] Layer
     string Orientation, string RenderOrder, string TiledVersion, int TileHeight, Tileset[] Tilesets, int TileWidth,
     string Type, string Version, int Width)
 {
-    internal Bounds Bounds() => new(new(0, 0), new(Width, Height));
+    internal Bounds Bounds => new(new(0, 0), new(Width, Height));
 
     internal ImmutableList<Location> Obstacles(CollisionMasks collisionMasks) => (
-        collisionMasks.Value.SelectMany(maskLayerIndex => Layers[maskLayerIndex].Obstacles())).ToImmutableList();
+        collisionMasks.Value.SelectMany(maskLayerIndex => Layers[maskLayerIndex].GetObstacles())).ToImmutableList();
 
     private Graph ConstructGraph(int layerIndex, bool allowDiagonal, Func<Location, bool> includeFunc)
     {

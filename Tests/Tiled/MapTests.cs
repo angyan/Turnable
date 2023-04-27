@@ -17,7 +17,7 @@ public class MapTests
         Map sut = new(-1, 16, false, Array.Empty<Layer>(), 1, 1, "orthogonal", "right-down", "1.9.2", 32, Array.Empty<Tileset>(), 32, "map",
             "1.9", 20);
 
-        Bounds bounds = sut.Bounds();
+        Bounds bounds = sut.Bounds;
 
         bounds.Should().Be(new Bounds(new(0, 0), new(20, 16)));
     }

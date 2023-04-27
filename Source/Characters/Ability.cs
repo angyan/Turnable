@@ -4,7 +4,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Turnable.Characters
-{
-    internal record Ability(string Description, Stat Stat);
-}
+namespace Turnable.Characters;
+
+internal record Ability(string Description, Stat Stat);

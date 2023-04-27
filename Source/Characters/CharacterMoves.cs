@@ -11,13 +11,13 @@ internal record CharacterMoves(ImmutableDictionary<Character, ImmutableList<Loca
             ? new CharacterMoves(Value.SetItem(character, Value[character].Add(location)))
             : new CharacterMoves(Value.Add(character, ImmutableList.Create(location)));
 
-    internal ImmutableDictionary<Character, Location> GetCurrentCharacterLocations(
+    internal ImmutableDictionary<Character, Location> GetLocations(
     ) => Value.ToImmutableDictionary(kvp => kvp.Key, kvp => kvp.Value.Last());
 
-    internal ImmutableDictionary<Character, Location> GetCurrentCharacterLocations(
+    internal ImmutableDictionary<Character, Location> GetLocations(
         Character characterToExclude) =>
-        GetCurrentCharacterLocations().Remove(characterToExclude);
+        GetLocations().Remove(characterToExclude);
 
-    internal ImmutableList<Location> GetCharacterMoves(Character character) =>
+    internal ImmutableList<Location> GetMoves(Character character) =>
         Value[character].Reverse();
 };

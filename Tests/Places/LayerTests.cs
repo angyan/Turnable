@@ -16,7 +16,7 @@ public class LayerTests
     {
         Layer sut = new(new int[] {0, 0, 0, 0}, 2, 1, "Layer", 1, "layer", true, 2, 0, 0);
 
-        Bounds bounds = sut.Bounds();
+        Bounds bounds = sut.Bounds;
 
         bounds.Should().Be(new Bounds(new(0, 0), new(2, 2)));
     }
@@ -43,7 +43,7 @@ public class LayerTests
     {
         Layer sut = new(new int[] {0, 0, 1, 1}, 2, 1, "Layer", 1, "layer", true, 2, 0, 0);
 
-        ImmutableList<Location> obstacles = sut.Obstacles();
+        ImmutableList<Location> obstacles = sut.GetObstacles();
 
         obstacles.Count.Should().Be(2); // Any non-zero Global Tile Id is an obstacle
         obstacles.Should().Contain(new Location(1, 1));
