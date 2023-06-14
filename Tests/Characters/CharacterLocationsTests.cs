@@ -54,7 +54,7 @@ public class CharacterLocationsTests
 
         // No Act
         
-        sut.Invoking(s => s.AddOnMap(character, location, map, new CollisionMasks(new[] { 1 }))).Should().Throw<ArgumentException>();
+        sut.Invoking(s => s.AddOnMap(character, location, map, new CollisionMasks(new[] { 1 }))).Should().Throw<ArgumentException>().WithMessage($"Character '{character.Name}' cannot be added twice at {location}");
     }
 
     [Fact]
@@ -71,7 +71,7 @@ public class CharacterLocationsTests
 
         // No Act
         
-        sut.Invoking(s => s.AddOnMap(character, location2, map, new CollisionMasks(new[] { 1 }))).Should().Throw<ArgumentException>();
+        sut.Invoking(s => s.AddOnMap(character, location2, map, new CollisionMasks(new[] { 1 }))).Should().Throw<ArgumentException>().WithMessage($"Character '{character.Name}' cannot be added at {location} and then at {location2}");
     }
 
     [Fact]
@@ -86,7 +86,7 @@ public class CharacterLocationsTests
         
         // No act
 
-        sut.Invoking(s => s.AddOnMap(character, location, map, new CollisionMasks(new[] { 1 }))).Should().Throw<ArgumentException>();
+        sut.Invoking(s => s.AddOnMap(character, location, map, new CollisionMasks(new[] { 1 }))).Should().Throw<ArgumentException>().WithMessage($"Character '{character.Name}' cannot be added at {location} because there is an obstacle there");
     }
 
     [Fact]
@@ -103,7 +103,7 @@ public class CharacterLocationsTests
 
         // No act
 
-        sut.Invoking(s => s.AddOnMap(character2, location, map, new CollisionMasks(new[] { 1 }))).Should().Throw<ArgumentException>();
+        sut.Invoking(s => s.AddOnMap(character2, location, map, new CollisionMasks(new[] { 1 }))).Should().Throw<ArgumentException>().WithMessage($"Character '{character.Name}' cannot be added at {location} because character '{character2.Name}' is already located at {location}");
     }
 
     private Character CreateCharacter(string name) => new(name, Abilities: ImmutableDictionary<string, Ability>.Empty, ImmutableDictionary<string, Skill>.Empty);
