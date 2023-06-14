@@ -1,6 +1,5 @@
 ﻿using FluentAssertions;
 using System.Collections.Immutable;
-using Turnable.AI.Pathfinding;
 using Turnable.Layouts;
 using Path = Turnable.AI.Pathfinding.Path;
 

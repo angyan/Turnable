@@ -11,7 +11,7 @@ public record Map(int CompressionLevel, int Height, bool Infinite, Layer[] Layer
 {
     internal Bounds Bounds => new(new(0, 0), new(Width, Height));
 
-    internal ImmutableList<Location> Obstacles(CollisionMasks collisionMasks) => (
+    internal ImmutableList<Location> GetObstacles(CollisionMasks collisionMasks) => (
         collisionMasks.Value.SelectMany(maskLayerIndex => Layers[maskLayerIndex].GetObstacles())).ToImmutableList();
 
     private Graph ConstructGraph(int layerIndex, bool allowDiagonal, Func<Location, bool> includeFunc)
@@ -19,8 +19,8 @@ public record Map(int CompressionLevel, int Height, bool Infinite, Layer[] Layer
         Layer layer = Layers[layerIndex];
 
         Dictionary<Location, ImmutableList<Location>> dictionary =
-            (from location in layer.Bounds().GetLocations()
-                let bounds = layer.Bounds()
+            (from location in layer.Bounds.GetLocations()
+                let bounds = layer.Bounds
                 let walkableNeighbors = Layouts.Bounds.GetNeighbors(bounds, location, allowDiagonal, includeFunc)
                 select new KeyValuePair<Location, ImmutableList<Location>>(location,
                     walkableNeighbors.ToImmutableList())).ToDictionary(pair => pair.Key, pair => pair.Value);
@@ -28,21 +28,21 @@ public record Map(int CompressionLevel, int Height, bool Infinite, Layer[] Layer
         return new Graph(dictionary.ToImmutableDictionary());
     }
 
-    private Func<Location, bool> IncludeOnlyFreeLocationsFunc(IList<Location> obstacles) =>
+    private Func<Location, bool> IncludeOnlyFreeLocationsPredicateFunc(IList<Location> obstacles) =>
         (location) => !obstacles.Contains(location);
 
     private Graph ConstructGraph(int layerIndex, CollisionMasks collisionMasks
         , bool allowDiagonal) => ConstructGraph(
-        layerIndex, allowDiagonal, IncludeOnlyFreeLocationsFunc(Obstacles(collisionMasks)));
+        layerIndex, allowDiagonal, IncludeOnlyFreeLocationsPredicateFunc(GetObstacles(collisionMasks)));
 
     private Graph ConstructGraph(int layerIndex, CollisionMasks collisionMasks, bool allowDiagonal,
         IList<Location> additionalObstacles) => ConstructGraph(
         layerIndex, allowDiagonal,
-        IncludeOnlyFreeLocationsFunc(Obstacles(collisionMasks).AddRange(additionalObstacles)));
+        IncludeOnlyFreeLocationsPredicateFunc(GetObstacles(collisionMasks).AddRange(additionalObstacles)));
 
-    public Graph Graph(int layerIndex,
+    public Graph GetGraph(int layerIndex,
         CollisionMasks collisionMasks, bool allowDiagonal) => ConstructGraph(layerIndex, collisionMasks, allowDiagonal);
 
-    public Graph Graph(int layerIndex,
+    public Graph GetGraph(int layerIndex,
         CollisionMasks collisionMasks, bool allowDiagonal, IList<Location> additionalObstacles) => ConstructGraph(layerIndex, collisionMasks, allowDiagonal, additionalObstacles);
 };

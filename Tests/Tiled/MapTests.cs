@@ -1,5 +1,4 @@
 using System.Collections.Immutable;
-using System.Runtime.CompilerServices;
 using FluentAssertions;
 using Turnable.AI.Pathfinding;
 using Turnable.Layouts;
@@ -33,7 +32,7 @@ public class MapTests
             "1.9", 20);
         CollisionMasks collisionMasks = new(sut, 0, new[] {1, 2});
 
-        ImmutableList<Location> obstacles = sut.Obstacles(collisionMasks);
+        ImmutableList<Location> obstacles = sut.GetObstacles(collisionMasks);
 
         obstacles.Count.Should().Be(2); // Any non-zero Global Tile Id is an obstacle
         obstacles.Should().Contain(new Location(1, 0));
@@ -50,7 +49,7 @@ public class MapTests
         Map sut = mapJsonString.Deserialize();
         CollisionMasks collisionMasks = new CollisionMasks(new[] { 1 });
 
-        Graph graph = sut.Graph(0, collisionMasks, allowDiagonal: true);
+        Graph graph = sut.GetGraph(0, collisionMasks, allowDiagonal: true);
 
         graph.Count.Should().Be(256); // Each location in the layer is a possible node (even if it's not walkable)
         // Based on how this map is set up, each corner of the lowermost layer should have just 1 walkable neighbor
@@ -73,7 +72,7 @@ public class MapTests
         CollisionMasks collisionMasks = new CollisionMasks(new[] { 1 });
         List<Location> additionalObstacles = new List<Location>() { new Location(2, 5), new Location(4, 5) };
 
-        Graph graph = sut.Graph(0, collisionMasks, allowDiagonal: true, additionalObstacles);
+        Graph graph = sut.GetGraph(0, collisionMasks, allowDiagonal: true, additionalObstacles);
         
         graph.Count.Should().Be(256);
         graph[new Location(0, 0)].Count.Should().Be(1);
@@ -94,7 +93,7 @@ public class MapTests
         Map sut = mapJsonString.Deserialize();
         CollisionMasks collisionMasks = new CollisionMasks(new[] { 1 });
 
-        Graph graph = sut.Graph(0, collisionMasks, allowDiagonal: false);
+        Graph graph = sut.GetGraph(0, collisionMasks, allowDiagonal: false);
 
         graph.Count.Should().Be(256); // Each location in the layer is a possible node (even if it's not walkable)
         // Based on how this map is set up, each corner of the lowermost layer should have just 1 walkable neighbor
@@ -117,7 +116,7 @@ public class MapTests
         CollisionMasks collisionMasks = new CollisionMasks(new[] { 1 });
         List<Location> additionalObstacles = new List<Location>() { new Location(4, 4) };
 
-        Graph graph = sut.Graph(0, collisionMasks, allowDiagonal: false, additionalObstacles);
+        Graph graph = sut.GetGraph(0, collisionMasks, allowDiagonal: false, additionalObstacles);
         
         graph.Count.Should().Be(256);
         graph[new Location(0, 0)].Count.Should().Be(0);

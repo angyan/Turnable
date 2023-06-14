@@ -68,4 +68,12 @@ public record Graph(ImmutableDictionary<Location, ImmutableList<Location>> Value
 
         return ReconstructPath(cameFrom, start, end);
     }
+
+    internal ImmutableList<Path> FindPaths(Location start, IImmutableList<Location> ends)
+    {
+        return (from end in ends
+            let path = FindPath(start, end)
+            orderby path.NodeCount
+            select path).ToImmutableList();
+    }
 }

@@ -1,6 +1,5 @@
 using FluentAssertions;
 using Turnable.Layouts;
-using Turnable.Places;
 using Turnable.Tiled;
 using Turnable.TiledMap;
 

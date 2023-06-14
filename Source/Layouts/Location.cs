@@ -1,6 +1,4 @@
-﻿using System.Runtime.CompilerServices;
-
-namespace Turnable.Layouts;
+﻿namespace Turnable.Layouts;
 
 public record Location(Coordinate X, Coordinate Y)
 {
