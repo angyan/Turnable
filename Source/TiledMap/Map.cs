@@ -2,6 +2,8 @@
 using Turnable.AI.Pathfinding;
 using Turnable.Layouts;
 using Turnable.Places;
+using Turnable.Tiled;
+
 namespace Turnable.TiledMap;
 
 public record Map(int CompressionLevel, int Height, bool Infinite, Layer[] Layers, int NextLayerId,
@@ -9,6 +11,14 @@ public record Map(int CompressionLevel, int Height, bool Infinite, Layer[] Layer
     string Orientation, string RenderOrder, string TiledVersion, int TileHeight, Tileset[] Tilesets, int TileWidth,
     string Type, string Version, int Width)
 {
+    internal Map Load(string filePath)
+    {
+        MapFilePath mapFilePath = new MapFilePath(filePath);
+        MapJsonString mapJsonString = new MapJsonString(File.ReadAllText(mapFilePath));
+
+        return mapJsonString.Deserialize();
+    }
+
     internal Bounds Bounds => new(new(0, 0), new(Width, Height));
 
     internal ImmutableList<Location> GetObstacles(CollisionMasks collisionMasks) => (

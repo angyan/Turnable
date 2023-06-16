@@ -243,11 +243,8 @@ public class GraphTests
     // Factory method to create a graph with diagonal nodes allowed
     private static Graph CreateGraphWithDiagonalNodesAllowed()
     {
-        MapFilePath mapFilePath =
-            new(
-                "../../../Fixtures/orthogonal_csv_right_down_map_dimensions_16x16_tile_dimensions_32x32_not_empty.tmj");
-        MapJsonString mapJsonString = new(File.ReadAllText(mapFilePath));
-        Map map = mapJsonString.Deserialize();
+        Map map = Map.Load(
+            "../../../Fixtures/orthogonal_csv_right_down_map_dimensions_16x16_tile_dimensions_32x32_not_empty.tmj");
         CollisionMasks collisionMasks = new CollisionMasks(new[] { 1 });
 
         return map.GetGraph(0, collisionMasks, allowDiagonal: true);
@@ -256,10 +253,8 @@ public class GraphTests
     // Factory method to create a graph with no diagonal nodes allowed
     private static Graph CreateGraphWithNoDiagonalNodesAllowed()
     {
-        MapFilePath mapFilePath =
-            new("../../../Fixtures/orthogonal_csv_right_down_map_dimensions_16x16_tile_dimensions_32x32_not_empty.tmj");
-        MapJsonString mapJsonString = new(File.ReadAllText(mapFilePath));
-        Map map = mapJsonString.Deserialize();
+        Map map = Map.Load(
+            "../../../Fixtures/orthogonal_csv_right_down_map_dimensions_16x16_tile_dimensions_32x32_not_empty.tmj");
         CollisionMasks collisionMasks = new CollisionMasks(new[] { 1 });
 
         return map.GetGraph(0, collisionMasks, allowDiagonal: false);

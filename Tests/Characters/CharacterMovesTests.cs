@@ -212,14 +212,8 @@ public class CharacterMovesTests
         sut.GetMovesCount(character).Should().Be(2);
     }
 
-    private Map CreateMap()
-    {
-        MapFilePath mapFilePath = new("../../../Fixtures/orthogonal_csv_right_down_map_dimensions_16x16_tile_dimensions_32x32_not_empty.tmj");
-        MapJsonString mapJsonString = new(File.ReadAllText(mapFilePath));
-        Map map = mapJsonString.Deserialize();
-
-        return map;
-    }
+    private Map CreateMap() => Map.Load(
+        "../../../Fixtures/orthogonal_csv_right_down_map_dimensions_16x16_tile_dimensions_32x32_not_empty.tmj");
 
     private Character CreateCharacter(string name) => new(name, Abilities: ImmutableDictionary<string, Ability>.Empty, ImmutableDictionary<string, Skill>.Empty);
 }

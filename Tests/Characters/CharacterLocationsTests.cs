@@ -27,9 +27,8 @@ public class CharacterLocationsTests
     [Fact]
     internal void A_characters_location_can_be_set_given_a_map()
     {
-        MapFilePath mapFilePath = new("../../../Fixtures/orthogonal_csv_right_down_map_dimensions_16x16_tile_dimensions_32x32_not_empty.tmj");
-        MapJsonString mapJsonString = new(File.ReadAllText(mapFilePath));
-        Map map = mapJsonString.Deserialize();
+        Map map = Map.Load(
+            "../../../Fixtures/orthogonal_csv_right_down_map_dimensions_16x16_tile_dimensions_32x32_not_empty.tmj");
         CharacterLocations sut = new();
         Character character = CreateCharacter("Test");
         Location location = new(1, 1);
@@ -44,9 +43,8 @@ public class CharacterLocationsTests
     [Fact]
     internal void A_character_cannot_be_added_twice_at_the_same_location()
     {
-        MapFilePath mapFilePath = new("../../../Fixtures/orthogonal_csv_right_down_map_dimensions_16x16_tile_dimensions_32x32_not_empty.tmj");
-        MapJsonString mapJsonString = new(File.ReadAllText(mapFilePath));
-        Map map = mapJsonString.Deserialize();
+        Map map = Map.Load(
+            "../../../Fixtures/orthogonal_csv_right_down_map_dimensions_16x16_tile_dimensions_32x32_not_empty.tmj");
         CharacterLocations sut = new();
         Character character = CreateCharacter("Test");
         Location location = new(1, 1);

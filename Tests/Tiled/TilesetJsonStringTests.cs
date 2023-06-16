@@ -71,8 +71,7 @@ public class TilesetJsonStringTests
         MapFilePath mapFilePath = new("../../../Fixtures/orthogonal_csv_right_down_map_dimensions_16x16_tile_dimensions_32x32_not_empty.tmj");
         MapJsonString mapJsonString = new(File.ReadAllText(mapFilePath));
         Map map = mapJsonString.Deserialize();
-
-
+        
         // Act
         TilesetFilePath tilesetFilePath = new("../../../Fixtures/tileset.tsj");
         TilesetJsonString tilesetJsonString = new(File.ReadAllText(tilesetFilePath));

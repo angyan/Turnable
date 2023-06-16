@@ -21,9 +21,7 @@ public class LayerTests
     [Fact]
     internal void The_global_tile_id_at_a_location_is_the_correct_value_from_the_layers_data()
     {
-        MapFilePath mapFilePath = new("../../../Fixtures/orthogonal_csv_right_down_map_dimensions_16x16_tile_dimensions_32x32_not_empty.tmj");
-        MapJsonString mapJsonString = new(File.ReadAllText(mapFilePath));
-        Map map = mapJsonString.Deserialize();
+        Map map = Map.Load("../../../Fixtures/orthogonal_csv_right_down_map_dimensions_16x16_tile_dimensions_32x32_not_empty.tmj");
         Layer sut = map.Layers[1];
 
         int tileAt00 = sut.TileGid(new Location(0, 0));
