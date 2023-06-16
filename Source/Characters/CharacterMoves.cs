@@ -14,14 +14,22 @@ internal record CharacterMoves(ImmutableDictionary<Character, ImmutableList<Loca
 
     internal CharacterMoves Move(Character character, Location location, Map map, CollisionMasks collisionMasks)
     {
+        // Is the character being moved to a location that is an obstacle?
         if (map.GetObstacles(collisionMasks).Contains(location))
         {
-            throw new ArgumentException();
+            throw new ArgumentException($"Character '{character.Name}' cannot be moved to {location} because there is an obstacle there");
         }
 
+        // Is the character being moved to the same location?
+        if (Value.ContainsKey(character) && Value[character].Last() == location)
+        {
+            throw new ArgumentException($"Character '{character.Name}' cannot be moved to {location} because it is already there");
+        }
+
+        // Is the character being moved to a location that is already occupied by another character?
         if (GetLocations().Values.Contains(location))
         {
-            throw new ArgumentException();
+            throw new ArgumentException($"Character '{character.Name}' cannot be added at {location} because another character is already at {location}");
         }
 
         return Value.ContainsKey(character)

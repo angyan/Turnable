@@ -103,7 +103,7 @@ public class CharacterLocationsTests
 
         // No act
 
-        sut.Invoking(s => s.AddOnMap(character2, location, map, new CollisionMasks(new[] { 1 }))).Should().Throw<ArgumentException>().WithMessage($"Character '{character.Name}' cannot be added at {location} because character '{character2.Name}' is already located at {location}");
+        sut.Invoking(s => s.AddOnMap(character2, location, map, new CollisionMasks(new[] { 1 }))).Should().Throw<ArgumentException>().WithMessage($"Character '{character2.Name}' cannot be added at {location} because another character is already located at {location}");
     }
 
     private Character CreateCharacter(string name) => new(name, Abilities: ImmutableDictionary<string, Ability>.Empty, ImmutableDictionary<string, Skill>.Empty);
